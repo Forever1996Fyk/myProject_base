@@ -1,0 +1,24 @@
+#配置端口号
+server:
+  port: 8090
+
+#数据库配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/project_fyk?characterEncoding=utf-8
+    username: root
+    password: root
+  jpa:
+    database: mysql
+    show-sql: true
+#  mvc:
+#    static-path-pattern: /static/**
+#    view:
+#      prefix: /
+#      suffix: .html
+  resources:
+    static-locations: classpath:/static
+
+
+
