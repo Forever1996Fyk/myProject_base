@@ -19,6 +19,14 @@ spring:
 #      suffix: .html
   resources:
     static-locations: classpath:/static
+logging:
+  level:
+    com:
+      javaweb:
+        controller: debug
+        global:
+          exception: warn
+
 
 
 
