@@ -65,6 +65,7 @@
         <table class="layui-table">
           <thead>
           <tr>
+            <th><input type="checkbox" />全选</th>
             <th>用户账号</th>
             <th>用户名称</th>
             <th>用户昵称</th>
@@ -83,6 +84,7 @@
           </thead>
           <tbody>
             <tr ng-repeat="user in userList">
+              <th><input type="checkbox" /></th>
               <td>{{user.account}}</td>
               <td>{{user.user_name}}</td>
               <td>{{user.nick_name}}</td>
