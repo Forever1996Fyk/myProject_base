@@ -19,9 +19,4 @@ public class BaseController {
     public String index() {
         return "redirect:views/index.html";
     }
-
-    @RequestMapping(value = "/index",method = RequestMethod.GET)
-    public String test() {
-        return "index";
-    }
 }
