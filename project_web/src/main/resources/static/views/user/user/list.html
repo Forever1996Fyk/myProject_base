@@ -11,42 +11,48 @@
   <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
   <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
 </head>
-<body ng-app="user" ng-controller="userController" ng-init="findAll()">
+<body ng-app="user" ng-controller="userController">
 
   <div class="layui-fluid">
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
         <div class="layui-form-item">
           <div class="layui-inline">
-            <label class="layui-form-label">ID</label>
+            <label class="layui-form-label">用户账号</label>
             <div class="layui-input-block">
-              <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="account" ng-model="user.account" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
             <label class="layui-form-label">用户名</label>
             <div class="layui-input-block">
-              <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="user_name" ng-model="user.user_name" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
-            <label class="layui-form-label">邮箱</label>
+            <label class="layui-form-label">用户昵称</label>
             <div class="layui-input-block">
-              <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
+              <input type="text" name="nick_name" ng-model="user.nick_name" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
           <div class="layui-inline">
-            <label class="layui-form-label">性别</label>
+            <label class="layui-form-label">身份证号</label>
             <div class="layui-input-block">
-              <select name="sex">
-                <option value="0">不限</option>
-                <option value="1">男</option>
-                <option value="2">女</option>
-              </select>
+              <input type="text" name="idcard" ng-model="user.idcard" placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
+          <!--<div class="layui-inline">-->
+            <!--<label class="layui-form-label">性别</label>-->
+            <!--<div class="layui-input-block">-->
+              <!--<select name="sex" id="sex">-->
+                <!--<option value="0">不限</option>-->
+                <!--<option value="1">男</option>-->
+                <!--<option value="2">女</option>-->
+              <!--</select>-->
+            <!--</div>-->
+          <!--</div>-->
           <div class="layui-inline">
-            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-user-front-search">
+            <button class="layui-btn layuiadmin-btn-useradmin" data-type="search">
               <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
             </button>
           </div>
@@ -55,69 +61,73 @@
       
       <div class="layui-card-body">
         <div style="padding-bottom: 10px;">
-          <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchDel">删除</button>
           <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
         </div>
         
         <!--<table id="LAY-user-manage" lay-filter="LAY-user-manage">-->
         <!--</table>-->
 
-        <table class="layui-table">
-          <thead>
-          <tr>
-            <th><input type="checkbox" />全选</th>
-            <th>用户账号</th>
-            <th>用户名称</th>
-            <th>用户昵称</th>
-            <th>头像</th>
-            <th>年龄</th>
-            <th>性别</th>
-            <th>婚否</th>
-            <th>手机号</th>
-            <th>邮箱</th>
-            <th>地址</th>
-            <th>身份证号</th>
-            <th>创建时间</th>
-            <th>是否禁用</th>
-            <th>操作</th>
-          </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="user in userList">
-              <th><input type="checkbox" /></th>
-              <td>{{user.account}}</td>
-              <td>{{user.user_name}}</td>
-              <td>{{user.nick_name}}</td>
-              <td>{{user.user_icon}}</td>
-              <td>{{user.age}}</td>
-              <td>{{user.sex}}</td>
-              <td>{{user.marry_flag}}</td>
-              <td>{{user.phone}}</td>
-              <td>{{user.email}}</td>
-              <td>{{user.address}}</td>
-              <td>{{user.idcard}}</td>
-              <td>{{user.create_time}}</td>
-              <td>{{user.status}}</td>
-              <td>
-                <div class="layui-btn-group">
-                  <button class="layui-btn layui-btn-sm">
-                    <i class="layui-icon">&#xe642;</i>
-                  </button>
-                  <button class="layui-btn layui-btn-sm layui-btn-danger" >
-                    <i class="layui-icon">&#xe640;</i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
+        <table id="userListTable" class="layui-table" lay-filter="tblist">
+          <script type="text/html" id="btn">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+          </script>
+          <!--<thead>-->
+          <!--<tr>-->
+            <!--<th><input type="checkbox" />全选</th>-->
+            <!--<th>用户账号</th>-->
+            <!--<th>用户名称</th>-->
+            <!--<th>用户昵称</th>-->
+            <!--<th>头像</th>-->
+            <!--<th>年龄</th>-->
+            <!--<th>性别</th>-->
+            <!--<th>婚否</th>-->
+            <!--<th>手机号</th>-->
+            <!--<th>邮箱</th>-->
+            <!--<th>地址</th>-->
+            <!--<th>身份证号</th>-->
+            <!--<th>创建时间</th>-->
+            <!--<th>是否禁用</th>-->
+            <!--<th>操作</th>-->
+          <!--</tr>-->
+          <!--</thead>-->
+          <!--<tbody>-->
+            <!--<tr ng-repeat="user in userList">-->
+              <!--<td><input type="checkbox" /></td>-->
+              <!--<td>{{user.account}}</td>-->
+              <!--<td>{{user.user_name}}</td>-->
+              <!--<td>{{user.nick_name}}</td>-->
+              <!--<td>{{user.user_icon}}</td>-->
+              <!--<td>{{user.age}}</td>-->
+              <!--<td>{{user.sex}}</td>-->
+              <!--<td>{{user.marry_flag}}</td>-->
+              <!--<td>{{user.phone}}</td>-->
+              <!--<td>{{user.email}}</td>-->
+              <!--<td>{{user.address}}</td>-->
+              <!--<td>{{user.idcard}}</td>-->
+              <!--<td>{{user.create_time}}</td>-->
+              <!--<td>{{user.status}}</td>-->
+              <!--<td>-->
+                <!--<div class="layui-btn-group">-->
+                  <!--<button class="layui-btn layui-btn-sm layui-btn-normal" data-type="edit">-->
+                    <!--编辑-->
+                  <!--</button>-->
+                  <!--<button class="layui-btn layui-btn-sm layui-btn-danger" data-type="delete">-->
+                    <!--删除-->
+                  <!--</button>-->
+                <!--</div>-->
+              <!--</td>-->
+            <!--</tr>-->
+          <!--</tbody>-->
         </table>
         <script type="text/html" id="imgTpl"> 
           <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         </script> 
-        <script type="text/html" id="table-useradmin-webuser">
-          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-        </script>
+        <!--<script type="text/html" id="table-useradmin-webuser">-->
+          <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+          <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>-->
+        <!--</script>-->
       </div>
     </div>
   </div>

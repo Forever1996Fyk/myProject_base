@@ -1,5 +1,7 @@
 package com.javaweb.pojo;
 
+import org.hibernate.annotations.SQLDelete;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -13,6 +15,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tb_user")
+@SQLDelete(sql = "update tb_user set status = 0 where id = ?")//软删除
 public class User implements Serializable{
 
 	@Id
@@ -38,7 +41,7 @@ public class User implements Serializable{
 	private String address;//地址
 	private String idcard;//身份证号
 	private String remark;//备注
-	private Integer status;//状态:0  已禁用 1 正在使用
+	private Integer status;//状态:0  已禁用 1 正在使用 2 已删除
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人

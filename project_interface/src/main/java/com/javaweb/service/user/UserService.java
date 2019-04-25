@@ -1,8 +1,10 @@
 package com.javaweb.service.user;
 
 import com.javaweb.pojo.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: project_parent
@@ -22,5 +24,34 @@ public interface UserService {
      * 新增用户
      * @return
      */
-    User addUser(User user);
+    User add(User user);
+
+    /**
+     * 更新用户
+     * @param user
+     * @return
+     */
+    User update(User user);
+
+    /**
+     * 删除用户
+     * @param id
+     * @return
+     */
+    void delete(String id);
+
+    /**
+     * 分页+ 条件查询
+     * @param searchMap
+     * @param page
+     * @param size
+     * @return
+     */
+    Page<User> pageQuery(Map<String, Object> searchMap, int page, int size);
+
+    /**
+     * 批量删除
+     * @param idsMap
+     */
+    void delBatch(Map<String, Object> idsMap);
 }

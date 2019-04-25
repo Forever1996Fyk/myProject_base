@@ -12,59 +12,60 @@
 </head>
 <body>
 
-  <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+  <div class="layui-form" lay-filter="userForm" id="userForm" style="padding: 20px 0 0 0;">
+    <input type="hidden" id="id" name="id"/>
     <div class="layui-form-item">
       <label class="layui-form-label">用户名</label>
       <div class="layui-input-inline">
-        <input type="text" name="user_name" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+        <input type="text" id="user_name" name="user_name" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">昵称</label>
       <div class="layui-input-inline">
-        <input type="text" name="nick_name"  placeholder="请输入用户昵称" autocomplete="off" class="layui-input">
+        <input type="text" id="nick_name" name="nick_name"  placeholder="请输入用户昵称" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">用户账号</label>
       <div class="layui-input-inline">
-        <input type="text" name="account" lay-verify="required" placeholder="请输入用户账号" autocomplete="off" class="layui-input">
+        <input type="text" id="account" name="account" lay-verify="required" placeholder="请输入用户账号" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">年龄</label>
       <div class="layui-input-inline">
-        <input type="text" name="age" placeholder="请输入年龄" autocomplete="off" class="layui-input">
+        <input type="text" id="age" name="age" placeholder="请输入年龄" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">地址</label>
       <div class="layui-input-inline">
-        <input type="text" name="address" placeholder="请输入用户地址" autocomplete="off" class="layui-input">
+        <input type="text"  id="address" name="address" placeholder="请输入用户地址" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">手机号码</label>
       <div class="layui-input-inline">
-        <input type="text" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
+        <input type="text" id="phone" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">身份证号</label>
       <div class="layui-input-inline">
-        <input type="text" name="address" placeholder="请输入用户身份证号" autocomplete="off" class="layui-input">
+        <input type="text" id="idcard" name="idcard" placeholder="请输入用户身份证号" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">邮箱</label>
       <div class="layui-input-inline">
-        <input type="text" name="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+        <input type="text" id="email" name="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">头像</label>
       <div class="layui-input-inline">
-        <input type="text" name="user_icon" placeholder="请上传图片" autocomplete="off" class="layui-input" >
+        <input type="text" id="user_icon" name="user_icon" placeholder="请上传图片" autocomplete="off" class="layui-input" >
       </div>
       <button style="float: left;" type="button" class="layui-btn" id="layuiadmin-upload-useradmin">上传图片</button> 
     </div>
@@ -76,7 +77,7 @@
       </div>
     </div>
     <div class="layui-form-item layui-hide">
-      <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+      <input type="button" lay-submit lay-filter="userSubmit" id="userSubmit" value="确认">
     </div>
   </div>
 
