@@ -42,12 +42,9 @@ app.controller('userController', function($scope, userService) {
         var iframeWindow = window[iframe+ index]
             ,submit = layero.find('iframe').contents().find('#'+ submitID);
 
-        iframeWindow.layui.form.on('radio(sex)',function (data) {
-            alert(data);
-        })
         //监听提交
         iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-
+            debugger;
             $scope.save(data.field).success(//保存事件
                 function (response) {
                     if (response.code === 200) {
@@ -102,12 +99,10 @@ app.controller('userController', function($scope, userService) {
                 , {field: 'age', title: '年龄', align: 'center'}
                 , {field: 'sex', title: '性别', align: 'center', templet: function (data) {
                     var result = '';
-                    if (data.sex) {
-                        if (data.sex === 1) {
-                            result = '男';
-                        } else {
-                            result = '女';
-                        }
+                    if (data.sex === 1) {
+                        result = '男';
+                    } else {
+                        result = '女';
                     }
                     return result;
                 }}
@@ -206,7 +201,7 @@ app.controller('userController', function($scope, userService) {
                     $scope.delete(data).success(
                         function (response) {
                             layer.msg(response.message);
-                            if (response.code == 200) {
+                            if (response.code === 200) {
                                 //刷新表格
                                 tableObject.reload({
                                     page: '{curr:1}'
