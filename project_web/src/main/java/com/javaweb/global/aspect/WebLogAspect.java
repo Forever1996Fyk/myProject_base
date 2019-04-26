@@ -1,5 +1,6 @@
-package com.javaweb.global.aspect;/**
- * Created by 恺b on 2019/4/25.
+package com.javaweb.global.aspect;
+/**
+ * Created by YuKai Fan on 2019/4/25.
  */
 
 import com.alibaba.fastjson.JSON;
@@ -27,7 +28,7 @@ public class WebLogAspect {
     private final static Logger logger = LoggerFactory.getLogger(WebLogAspect.class);
 
     /**
-     * 以controller包下定义的所有请求为切入点
+     * 包下定义的所有请求为切入点
      */
     @Pointcut("execution(public * com.javaweb.controller..*.*(..)) || execution(* com.javaweb.global.exception.*.*(..))")
     public void webLog() {}
@@ -69,7 +70,7 @@ public class WebLogAspect {
     }
 
     /**
-     * 环绕,在整个切入点都会进行切入(意思有待学习)
+     * 环绕,(意思有待学习)
      * @param proceedingJoinPoint
      * @return
      * @throws Throwable
