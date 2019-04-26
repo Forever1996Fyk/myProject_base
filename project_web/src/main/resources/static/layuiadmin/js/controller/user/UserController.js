@@ -37,7 +37,37 @@ app.controller('userController', function($scope, userService) {
         return userService.delBatch(ids);
     };
 
-   layui.use(['table', 'layer', 'form'], function() {
+    //弹出层方法
+    $scope.layerFrame = function (iframe, submitID, index, layero, tableObject) {
+        var iframeWindow = window[iframe+ index]
+            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+        iframeWindow.layui.form.on('radio(sex)',function (data) {
+            alert(data);
+        })
+        //监听提交
+        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+
+            $scope.save(data.field).success(//保存事件
+                function (response) {
+                    if (response.code === 200) {
+                        layer.msg(response.message);
+                        layer.close(index); //关闭弹层
+                        //刷新表格
+                        tableObject.reload({
+                            page: '{curr:1}'
+                        });
+                    } else {
+                        layer.msg(response.message);
+                    }
+                }
+            );
+        });
+
+        submit.trigger('click');
+    };
+
+  layui.use(['table', 'layer', 'form'], function() {
         var layer = layui.layer;
         var table = layui.table;
 
@@ -132,31 +162,7 @@ app.controller('userController', function($scope, userService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        var iframeWindow = window['layui-layer-iframe'+ index]
-                            ,submitID = 'userSubmit'
-                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
-
-                        //监听提交
-                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-
-                            $scope.save(data.field).success(//保存事件
-                                function (response) {
-                                    debugger;
-                                    if (response.code == 200) {
-                                        layer.msg(response.message);
-                                        layer.close(index); //关闭弹层
-                                        //刷新表格
-                                        tableObject.reload({
-                                            page: '{curr:1}'
-                                        });
-                                    } else {
-                                        layer.msg(response.message);
-                                    }
-                                }
-                            );
-                        });
-
-                        submit.trigger('click');
+                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject);
                     }
                 });
             },
@@ -183,30 +189,7 @@ app.controller('userController', function($scope, userService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        var iframeWindow = window['layui-layer-iframe'+ index] //获取弹出框的窗口
-                            ,submitID = 'userSubmit' //提交按钮id,lay-filter。两者最好起一样的名称
-                            ,submit = layero.find('iframe').contents().find('#'+ submitID); //根据id选择器获取元素
-
-                        //监听提交
-                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-
-                            $scope.save(data.field).success(//保存事件
-                                function (response) {
-                                    if (response.code == 200) {
-                                        layer.msg(response.message);
-                                        layer.close(index); //关闭弹层
-                                        //刷新表格
-                                        tableObject.reload({
-                                            page: '{curr:1}'
-                                        });
-                                    } else {
-                                        layer.msg(response.message);
-                                    }
-                                }
-                            );
-                        });
-
-                        submit.trigger('click');
+                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject);
                     }
                     ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
                         var userForm = layero.find('iframe').contents().find('#userForm');
@@ -237,7 +220,7 @@ app.controller('userController', function($scope, userService) {
 
             //批量删除
             batchDel:function () {
-                var checkStatus = table.checkStatus('id')//注意这个id不是html中table元素上的id，而是table:render中定义的id                    ,data = checkStatus.data
+                var checkStatus = table.checkStatus('id')//注意这个id不是html中table元素上的id，而是table:render中定义的id
                     ,ids = [];
                 if (checkStatus.data.length === 0) {
                     layer.msg('请选择要删除的数据行');
