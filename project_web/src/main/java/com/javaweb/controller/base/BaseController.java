@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @create: 2019-04-24 10:22
  **/
 @Controller
-@RequestMapping("/base")
+@RequestMapping("/")
 public class BaseController {
 
     @RequestMapping("/")
