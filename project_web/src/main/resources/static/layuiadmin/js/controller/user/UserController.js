@@ -1,7 +1,11 @@
 /**
  * Created by Administrator on 2019/4/24.
  */
-app.controller('userController', function($scope, userService) {
+app.controller('userController', function($scope, $controller, userService) {
+
+    //这其实是一种伪继承，并不是真正的继承，是通过传递scope，将基础controller的scope传递赋给子controller的scope,从而达到继承的效果
+    $controller('baseController', {$scope:$scope});//第一个参数：表示要继承的controller;
+
 
     $scope.user = {};
 
@@ -73,23 +77,11 @@ app.controller('userController', function($scope, userService) {
             ,elem: '#userListTable'
             , height: 500
             , url: '../../../user/search'//数据接口
-            , where: {//传递参数
-                user : $scope.user
-            }
-            , parseData: function(res) {//将返回数据统一成layui默认数据格式,这样分页才能生效
-                return {
-                    "code": res.code,
-                    "msg": res.message,
-                    "count": res.data.total,
-                    "data": res.data.rows
-                }
-            }
-            , response:{//默认加载数据的状态码是0，改为200
-                statusCode: 200
-            }
-            , page: true //开启分页
-            , limits: [10, 20, 30]
-            , limit: 10
+            , parseData: $scope.paginationConf.parseData
+            , response: $scope.paginationConf.response
+            , page: $scope.paginationConf.page //开启分页
+            , limits: $scope.paginationConf.limits
+            , limit: $scope.paginationConf.limit
             , cols: [[ //表头,field要与实体类字段相同
                 {type: 'checkbox'}
                 , {field: 'account', title: '用户账号', align: 'center'}
@@ -192,7 +184,7 @@ app.controller('userController', function($scope, userService) {
                             userForm.find('#' + key).val(data[key]);
                         }
                     }
-                });
+                })
             },
 
             //删除
@@ -229,7 +221,7 @@ app.controller('userController', function($scope, userService) {
 
                 $scope.delBatch(ids).success(
                     function (response) {
-                        if (response.code == 200) {
+                        if (response.code === 200) {
                             layer.msg(response.message);
                             //刷新表格
                             tableObject.reload({
