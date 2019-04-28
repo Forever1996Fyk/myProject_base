@@ -1,0 +1,2 @@
+#修改或者新增的字段
+ALTER TABLE tb_permission add url VARCHAR(200) DEFAULT NULL COMMENT '链接'

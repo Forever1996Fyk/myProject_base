@@ -15,7 +15,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tb_user")
-@SQLDelete(sql = "update tb_user set status = 0 where id = ?")//软删除
+@SQLDelete(sql = "update tb_user set status = 2 where id = ?")//软删除
 public class User implements Serializable{
 
 	@Id

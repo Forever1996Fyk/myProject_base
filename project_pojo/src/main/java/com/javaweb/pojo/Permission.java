@@ -1,5 +1,7 @@
 package com.javaweb.pojo;
 
+import org.hibernate.annotations.SQLDelete;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -13,18 +15,17 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tb_permission")
+@SQLDelete(sql = "update tb_permission set status = 2 where id = ?")//软删除
 public class Permission implements Serializable{
 
 	@Id
 	private String id;//权限标识
-
-
-	
 	private String name;//权限名称
 	private String pid;//上级权限id
-	private Integer range;//排名
+	private Integer sort;//排名 注意mysql版本中的关键字与保留字，原来的range不能使用
 	private Integer level;//等级
 	private String remark;//备注
+	private String url;//链接
 	private Integer status;//状态:0  已禁用 1 正在使用
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
@@ -53,14 +54,15 @@ public class Permission implements Serializable{
 		this.pid = pid;
 	}
 
-	public Integer getRange() {		
-		return range;
-	}
-	public void setRange(Integer range) {
-		this.range = range;
+	public Integer getSort() {
+		return sort;
 	}
 
-	public Integer getLevel() {		
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public Integer getLevel() {
 		return level;
 	}
 	public void setLevel(Integer level) {
@@ -109,6 +111,11 @@ public class Permission implements Serializable{
 		this.update_time = update_time;
 	}
 
+	public String getUrl() {
+		return url;
+	}
 
-
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }

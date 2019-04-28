@@ -1,17 +1,17 @@
 /**
  * Created by Administrator on 2019/4/24.
  */
-app.controller('userController', function($scope, $controller, userService) {
+app.controller('roleController', function($scope, $controller, roleService) {
 
     //这其实是一种伪继承，并不是真正的继承，是通过传递scope，将基础controller的scope传递赋给子controller的scope,从而达到继承的效果
     $controller('baseController', {$scope:$scope});//第一个参数：表示要继承的controller;
 
 
-    $scope.user = {};
+    $scope.role = {};
 
     //查询所有
     $scope.findAll = function() {
-        userService.findAll().success(
+        roleService.findAll().success(
             function (response) {
                 $scope.userList = response.data;
                 console.log(response);
@@ -23,9 +23,9 @@ app.controller('userController', function($scope, $controller, userService) {
     $scope.save = function(data) {
         var object = null;
         if (data.id) {
-            object = userService.update(data);
+            object = roleService.update(data);
         } else {
-            object = userService.add(data);
+            object = roleService.add(data);
         }
 
         return object;
@@ -33,17 +33,17 @@ app.controller('userController', function($scope, $controller, userService) {
 
     //删除
     $scope.delete = function (data) {
-        return userService.delete(data);
+        return roleService.delete(data);
     };
     
     //批量删除
     $scope.delBatch = function (ids) {
-        return userService.delBatch(ids);
+        return roleService.delBatch(ids);
     };
 
     //弹出层方法
     $scope.layerFrame = function (iframe, submitID, index, layero, tableObject) {
-        var iframeWindow = window[iframe+ index]
+        var iframeWindow = window[iframe + index]
             ,submit = layero.find('iframe').contents().find('#'+ submitID);
 
         //监听提交
@@ -73,9 +73,9 @@ app.controller('userController', function($scope, $controller, userService) {
 
         var tableObject = table.render({
             id:"id"
-            ,elem: '#userListTable'
+            ,elem: '#roleListTable'
             , height: 500
-            , url: '../../../user/search'//数据接口
+            , url: '../../../role/search'//数据接口
             , parseData: $scope.paginationConf.parseData
             , response: $scope.paginationConf.response
             , page: $scope.paginationConf.page //开启分页
@@ -83,35 +83,8 @@ app.controller('userController', function($scope, $controller, userService) {
             , limit: $scope.paginationConf.limit
             , cols: [[ //表头,field要与实体类字段相同
                 {type: 'checkbox'}
-                , {field: 'account', title: '用户账号', align: 'center'}
-                , {field: 'user_name', title: '用户名称', align: 'center'}
-                , {field: 'nick_name', title: '用户昵称', align: 'center'}
-                , {field: 'user_icon', title: '头像',  align: 'center'}
-                , {field: 'age', title: '年龄', align: 'center'}
-                , {field: 'sex', title: '性别', align: 'center', templet: function (data) {
-                    var result = '';
-                    if (data.sex === 1) {
-                        result = '男';
-                    } else {
-                        result = '女';
-                    }
-                    return result;
-                }}
-                , {field: 'marry_flag', title: '婚否', align: 'center', templet: function (data) {
-                    var result = '';
-                    if (data.marry_flag) {
-                        if (data.marry_flag === 1) {
-                            result = '已婚';
-                        } else if (data.marry_flag === 0) {
-                            result = '未婚';
-                        }
-                    }
-                    return result;
-                }}
-                , {field: 'phone', title: '手机号',align: 'center'}
-                , {field: 'email', title: '邮箱', align: 'center'}
-                , {field: 'address', title: '地址', align: 'center'}
-                , {field: 'idcard', title: '身份证号', align: 'center'}
+                , {field: 'role_name', title: '角色名称', align: 'center'}
+                , {field: 'remark', title: '备注', align: 'center'}
                 , {field: 'create_time', title: '创建时间', align: 'center'}
                 , {field: 'status', title: '是否禁用', align: 'center', templet: function (data) {
                     var result;
@@ -142,13 +115,13 @@ app.controller('userController', function($scope, $controller, userService) {
             add:function () {
                 layer.open({
                     type: 2
-                    ,title: '添加用户'
-                    ,content: 'userform.html'
+                    ,title: '添加角色'
+                    ,content: 'roleform.html'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject);
+                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject);
                     }
                 });
             },
@@ -157,10 +130,7 @@ app.controller('userController', function($scope, $controller, userService) {
             search:function () {
                 tableObject.reload({
                     where:{
-                        account: $scope.user.account,
-                        user_name: $scope.user.user_name,
-                        nick_name: $scope.user.nick_name,
-                        idcard: $scope.user.idcard
+                        role_name: $scope.role.role_name
                     }
                 })
             },
@@ -169,16 +139,16 @@ app.controller('userController', function($scope, $controller, userService) {
             edit:function (data) {
                 layer.open({
                     type: 2
-                    ,title: '编辑用户'
-                    ,content: 'userform.html'
+                    ,title: '编辑角色'
+                    ,content: 'roleform.html'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject);
+                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject);
                     }
                     ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
-                        var userForm = layero.find('iframe').contents().find('#userForm');
+                        var userForm = layero.find('iframe').contents().find('#roleForm');
                         for (var key in data) {//遍历json数据，并将数据复制到form表单对应的字段，这里要求
                             userForm.find('#' + key).val(data[key]);
                         }
@@ -233,9 +203,9 @@ app.controller('userController', function($scope, $controller, userService) {
                 );
             }
         };
-        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+        $('.layui-btn.layuiadmin-btn-role').on('click', function(){
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
     })
-})
+});

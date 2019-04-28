@@ -3,6 +3,7 @@ package com.javaweb.service.user;
 import com.javaweb.dao.user.UserDao;
 import com.javaweb.pojo.User;
 import constant.StatusConstant;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import util.BeanUtil;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -44,7 +46,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        return userDao.save(user);
+        //解决Spring Data Jpa部分数据更新问题
+        User preUser = userDao.findById(user.getId()).get();
+        BeanUtils.copyProperties(user, preUser, BeanUtil.getNullPropNames(user));//将user中非null的值，copy到preUser中
+        return userDao.save(preUser);
     }
 
     @Override

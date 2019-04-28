@@ -8,7 +8,7 @@ CREATE TABLE `tb_permission` (
   `id` varchar(32) NOT NULL COMMENT '权限标识',
   `name` varchar(200) DEFAULT NULL COMMENT '权限名称',
   `pid` varchar(32) DEFAULT NULL COMMENT '上级权限id',
-  `range` int(4) DEFAULT NULL COMMENT '排名',
+  `sort` int(4) DEFAULT NULL COMMENT '排名',
   `level` int(4) DEFAULT NULL COMMENT '等级',
   `remark` varchar(200) DEFAULT NULL COMMENT '备注',
   `status` int(4) DEFAULT '1' COMMENT '状态:0  已禁用 1 正在使用',

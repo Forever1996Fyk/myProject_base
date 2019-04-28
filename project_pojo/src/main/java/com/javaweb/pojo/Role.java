@@ -1,5 +1,7 @@
 package com.javaweb.pojo;
 
+import org.hibernate.annotations.SQLDelete;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -13,13 +15,11 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tb_role")
+@SQLDelete(sql = "update tb_role set status = 2 where id = ?")//软删除
 public class Role implements Serializable{
 
 	@Id
 	private String id;//角色标识
-
-
-
 	private String role_name;//角色名称
 	private String remark;//备注
 	private Integer status;//状态:0  已禁用 1 正在使用

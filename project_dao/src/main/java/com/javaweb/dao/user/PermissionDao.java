@@ -1,6 +1,6 @@
 package com.javaweb.dao.user;
 
-import com.javaweb.pojo.User;
+import com.javaweb.pojo.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author: YuKai Fan
  * @create: 2019-04-24 16:14
  **/
-public interface UserDao extends JpaRepository<User, String>, JpaSpecificationExecutor<User>{
+public interface PermissionDao extends JpaRepository<Permission, String>, JpaSpecificationExecutor<Permission>{
 
     /**
      * 自定义JPQL
@@ -23,7 +23,6 @@ public interface UserDao extends JpaRepository<User, String>, JpaSpecificationEx
      */
     @Modifying
     @Transactional
-    @Query("update User set status = 2 where id in (?1)")
+    @Query("update Permission set status = 2 where id in (?1)")
     void delBatch(List<String> ids);
-
 }
