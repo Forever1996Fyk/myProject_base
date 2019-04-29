@@ -5,8 +5,10 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 实体类
@@ -27,6 +29,8 @@ public class Permission implements Serializable{
 	private String remark;//备注
 	private String url;//链接
 	private Integer status;//状态:0  已禁用 1 正在使用
+	@Transient
+	private Map<String, Object> pPermission;//上级权限实体
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人
@@ -117,5 +121,13 @@ public class Permission implements Serializable{
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public Map<String, Object> getpPermission() {
+		return pPermission;
+	}
+
+	public void setpPermission(Map<String, Object> pPermission) {
+		this.pPermission = pPermission;
 	}
 }

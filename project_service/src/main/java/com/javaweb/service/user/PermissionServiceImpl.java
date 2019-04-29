@@ -6,6 +6,7 @@ import com.javaweb.pojo.Role;
 import constant.StatusConstant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @program: project_parent
@@ -53,6 +55,10 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionDao.save(prePermission);
     }
 
+    public Map<String, Object> findOne(String pid) {
+        return permissionDao.findOneByPid(pid);
+    }
+
     @Override
     public void delete(String id) {
         permissionDao.deleteById(id);
@@ -64,7 +70,14 @@ public class PermissionServiceImpl implements PermissionService {
         Pageable pageable = PageRequest.of(page-1, size);
         //查询条件
         Specification<Permission> specifiaction = createSpecifiaction(searchMap);
-        return permissionDao.findAll(specifiaction, pageable);
+        Page<Permission> permissionPage = permissionDao.findAll(specifiaction, pageable);
+
+        //根据pid查询上级目录
+        for (Permission permission : permissionPage) {
+            Map<String, Object> map = this.findOne(permission.getPid());
+            permission.setpPermission(map);
+        }
+       return permissionPage;
     }
 
     @Override
@@ -97,7 +110,7 @@ public class PermissionServiceImpl implements PermissionService {
                 //查询条件
                 // 权限标识
                 if (searchMap.get("id")!=null && !"".equals(searchMap.get("id"))) {
-                    predicateList.add(criteriaBuilder.equal(root.get("id").as(String.class), "%"+(String)searchMap.get("id")+"%"));
+                    predicateList.add(criteriaBuilder.equal(root.get("id").as(String.class), (String)searchMap.get("id")));
                 }
                 // 权限名称
                 if (searchMap.get("name")!=null && !"".equals(searchMap.get("name"))) {
@@ -106,6 +119,10 @@ public class PermissionServiceImpl implements PermissionService {
                 // 上级权限id
                 if (searchMap.get("pid")!=null && !"".equals(searchMap.get("pid"))) {
                     predicateList.add(criteriaBuilder.like(root.get("pid").as(String.class), "%"+(String)searchMap.get("pid")+"%"));
+                }
+                // 等级
+                if (searchMap.get("level")!=null && !"".equals(searchMap.get("level"))) {
+                    predicateList.add(criteriaBuilder.equal(root.get("level").as(String.class), searchMap.get("level")));
                 }
                 // 备注
                 if (searchMap.get("remark")!=null && !"".equals(searchMap.get("remark"))) {

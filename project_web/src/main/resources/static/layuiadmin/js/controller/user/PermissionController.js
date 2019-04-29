@@ -48,6 +48,8 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
 
         //监听提交
         iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+            var userForm = layero.find('iframe').contents().find('#permissionForm');
+            data.field.pid = userForm.find('#pid').attr('pid');
             $scope.save(data.field).success(//保存事件
                 function (response) {
                     if (response.code === 200) {
@@ -67,7 +69,13 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
         submit.trigger('click');
     };
 
-    layui.use(['table', 'layer', 'form'], function() {
+    //赋值操作
+    $scope.assignment = function (id, name) {
+        $("#retrunParent").val(id);
+        $("#retrunParent").attr('lastName', name);
+    };
+
+    layui.use(['table', 'layer', 'form', 'tree'], function() {
         var layer = layui.layer;
         var table = layui.table;
 
@@ -81,10 +89,29 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
             , page: $scope.paginationConf.page //开启分页
             , limits: $scope.paginationConf.limits
             , limit: $scope.paginationConf.limit
+            , where: {
+                level: 1
+            }
             , cols: [[ //表头,field要与实体类字段相同
                 {type: 'checkbox'}
-                , {field: 'name', title: '权限名称', align: 'center'}
-                , {field: 'pName', title: '上级权限名称', align: 'center'}
+                , {field: 'name', title: '权限名称', align: 'center', event: 'getChildPer', style: 'cursor:pointer', templet: function (data) {
+                    var result;
+                    if (data.pid) {
+                        result = '<span style="color: cornflowerblue">'+ data.name +'</span>';
+                    } else {
+                        result = data.name;
+                    }
+                    return result;
+                }}
+                , {field: 'pName', title: '上级权限名称', align: 'center', templet: function (data) {
+                    var result;
+                    if (!$.isEmptyObject(data.pPermission)) {
+                        result = data.pPermission.name;
+                    } else {
+                        result = '无';
+                    }
+                    return result;
+                }}
                 , {field: 'range', title: '排序', align: 'center'}
                 , {field: 'level', title: '等级', align: 'center'}
                 , {field: 'url', title: '链接', align: 'center'}
@@ -109,8 +136,8 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                 active.edit(obj.data);
             } else if (obj.event == 'del') {
                 active.delete(obj.data);
-            } else if (obj.event == '') {
-
+            } else if (obj.event == 'getChildPer') {
+                active.getChildPermission(obj.data);
             }
 
         });
@@ -127,6 +154,13 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
                         $scope.layerFrame('layui-layer-iframe', 'permissionSubmit', index, layero, tableObject);
+                    }
+                    ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
+                        var userForm = layero.find('iframe').contents().find('#permissionForm');
+                        var lastName = $("#retrunParent").attr("lastName");
+                        if (lastName && lastName !== undefined) {
+                            userForm.find('#pid').val(lastName);
+                        }
                     }
                 });
             },
@@ -147,6 +181,13 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                         var userForm = layero.find('iframe').contents().find('#permissionForm');
                         for (var key in data) {//遍历json数据，并将数据复制到form表单对应的字段，这里要求
                             userForm.find('#' + key).val(data[key]);
+                        }
+
+                        var lastName = $("#retrunParent").attr("lastName");
+                        var pid = $("#retrunParent").val();
+                        if (lastName && lastName !== undefined) {
+                            userForm.find('#pid').val(lastName);
+                            userForm.find('#pid').attr('pid', pid);
                         }
                     }
                 })
@@ -197,7 +238,28 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                         }
                     }
                 );
+            },
+
+            //跳转到下级权限目录
+            getChildPermission: function (data) {
+                $scope.assignment(data.id, data.name);
+                //刷新表格
+                tableObject.reload({
+                    page: '{curr:1}',
+                    where: {'pid': data.id}
+                });
+            },
+
+            //返回主目录
+            retrunParent: function () {
+                $scope.assignment(null, null);
+                //刷新表格
+                tableObject.reload({
+                    page: '{curr:1}',
+                    where: {level: 1}
+                });
             }
+            
         };
         $('.layui-btn.layuiadmin-btn-permission').on('click', function(){
             var type = $(this).data('type');
