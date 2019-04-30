@@ -1,5 +1,6 @@
 package com.javaweb.controller.user;
 
+import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import com.javaweb.service.user.RoleService;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import util.IdWorker;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,7 +83,8 @@ public class RoleController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public Result pageQuery(@RequestParam Map<String, Object> searchMap) {
         Page<Role> pageData = roleService.pageQuery(searchMap, Integer.parseInt(searchMap.get("page").toString()), Integer.parseInt(searchMap.get("limit").toString()));
-        return new Result(true, StatusCode.OK.getValue(), "查询成功", new PageResult<Role>(pageData.getTotalElements(), pageData.getContent()));
+        PageResult<Role> rolePageResult = new PageResult<>(pageData.getTotalElements(), pageData.getContent());
+        return new Result(true, StatusCode.OK.getValue(), "查询成功",rolePageResult);
     }
 
     /**
@@ -92,6 +96,30 @@ public class RoleController {
     public Result delBatch(@RequestParam Map<String, Object> idsMap) {
         roleService.delBatch(idsMap);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
+    }
+
+    /**
+     * 查询该角色的权限资源
+     * @param role
+     * @return
+     */
+    @RequestMapping(value = "/findPermission", method = RequestMethod.POST)
+    public Result findPermission(@RequestBody Role role) {
+        List<Permission> permission = roleService.findPermission(role);
+        return new Result(true, StatusCode.OK.getValue(), "查询成功", permission);
+    }
+
+    /**
+     * 保存权限
+     * @param role
+     * @return
+     */
+    @RequestMapping(value = "/savePermission", method = RequestMethod.POST)
+    public Result savePermission(@RequestParam(value = "id", required = true) Role role,
+                                 @RequestParam(value = "authId", required = false) HashSet<Permission> permissions) {
+        role.setPermissions(permissions);
+        roleService.add(role);
+        return new Result(true, StatusCode.OK.getValue(), "查询成功");
     }
 
 }

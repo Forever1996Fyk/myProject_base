@@ -16,7 +16,7 @@ import java.util.Date;
 public class RolePermission implements Serializable{
 
 	@Id
-	private String id;//主键标识
+	private Integer id;//主键标识
 
 
 
@@ -28,10 +28,10 @@ public class RolePermission implements Serializable{
 	private Date update_time;//更新时间
 
 	
-	public String getId() {		
+	public Integer getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

@@ -8,3 +8,4 @@
 ###### layui遇到的问题：https://blog.csdn.net/qq_34873338/article/details/78726167
 ###### 权限管理问题：https://segmentfault.com/a/1190000010637751 https://www.cnblogs.com/zhaojiatao/p/8482998.html
 ###### 参考jpa更新操作遇到的问题：https://carsymor.iteye.com/blog/2398653 https://blog.csdn.net/xubaifu1997/article/details/77162271
+###### 注解开发：https://blog.csdn.net/briblue/article/details/73824058

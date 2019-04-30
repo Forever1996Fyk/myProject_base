@@ -1,14 +1,14 @@
 package com.javaweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.SQLDelete;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 实体类
@@ -29,8 +29,12 @@ public class Permission implements Serializable{
 	private String remark;//备注
 	private String url;//链接
 	private Integer status;//状态:0  已禁用 1 正在使用
+	@ManyToMany(mappedBy = "permissions")//mappedBy表示:只能角色控制权限，权限无法控制角色
+	private Set<Role> roles = new HashSet<>(0);
 	@Transient
 	private Map<String, Object> pPermission;//上级权限实体
+	@Transient
+	private Integer selected;//判断权限是否被选中
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人
@@ -129,5 +133,21 @@ public class Permission implements Serializable{
 
 	public void setpPermission(Map<String, Object> pPermission) {
 		this.pPermission = pPermission;
+	}
+
+	public Integer getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Integer selected) {
+		this.selected = selected;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 }

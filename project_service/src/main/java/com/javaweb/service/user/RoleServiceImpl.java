@@ -1,10 +1,15 @@
 package com.javaweb.service.user;
 
+import com.javaweb.dao.user.PermissionDao;
 import com.javaweb.dao.user.RoleDao;
+import com.javaweb.dao.user.RolePermissionDao;
+import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
+import com.javaweb.pojo.RolePermission;
 import constant.StatusConstant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +26,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @program: project_parent
@@ -33,6 +39,8 @@ import java.util.Map;
 public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleDao roleDao;
+    @Autowired
+    private PermissionDao permissionDao;
 
     @Override
     public List<Role> findAll() {
@@ -73,6 +81,27 @@ public class RoleServiceImpl implements RoleService {
             List<String> list = CollectionUtils.arrayToList(ids);
             roleDao.delBatch(list);
         }
+    }
+
+    @Override
+    public List<Permission> findPermission(Role role) {
+        Set<Permission> permissions = role.getPermissions();
+        Permission entity = new Permission();
+        entity.setStatus(1);
+
+        Example<Permission> example = Example.of(entity);
+        List<Permission> permissionList = permissionDao.findAll(example);
+
+        if (!CollectionUtils.isEmpty(permissions)) {
+            for (Permission permission : permissionList) {
+                if (permissions.contains(permission)) {
+                    permission.setSelected(1);
+                } else {
+                    permission.setSelected(0);
+                }
+            }
+        }
+        return permissionList;
     }
 
     /**

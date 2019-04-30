@@ -47,7 +47,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
             ,submit = layero.find('iframe').contents().find('#'+ submitID);
 
         //监听提交
-        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+        iframeWindow.layui.form.on('submit('+ submitID +')', function(){
             $scope.save(data.field).success(//保存事件
                 function (response) {
                     if (response.code === 200) {
@@ -65,6 +65,62 @@ app.controller('roleController', function($scope, $controller, roleService) {
         });
 
         submit.trigger('click');
+    };
+
+    //获取该角色的权限
+    $scope.findPermission = function (data) {
+        return roleService.findPermission(data[0]);
+    };
+    
+    //保存权限
+    $scope.savePermission = function (authIds) {
+        return roleService.savePermission(authIds);
+    };
+
+    //加载ztree
+    $scope.loadTree = function (result, tree) {
+        var setting = {
+            check: {
+                enable: true,
+                chkboxType: { "Y" : "ps", "N" : "ps" }
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+        var keyPid = [];
+        result.data.forEach(function(item){
+            keyPid[item.pid] = true;
+        });
+        var zNodes =[];
+        result.data.forEach(function (item) {
+            var menu = {
+                id: item.id,
+                pId: item.pid,
+                name: item.name
+            };
+            if(item.pid === 0){
+                menu.open = true;
+            }
+            if(item.url.indexOf("/index") !== -1 && keyPid[item.id]){
+                var index = {
+                    id: item.id*-1,
+                    pId: item.id,
+                    name: "列表"
+                };
+                if(item.selected === "1"){
+                    index.checked = true;
+                }
+                zNodes.push(index);
+            }
+            if(item.selected === "1"){
+                menu.checked = true;
+            }
+            zNodes.push(menu);
+        });
+        $.fn.zTree.init(tree, setting, zNodes);
     };
 
   layui.use(['table', 'layer', 'form'], function() {
@@ -201,6 +257,67 @@ app.controller('roleController', function($scope, $controller, roleService) {
                         }
                     }
                 );
+            },
+            
+            //角色授权
+            authorization: function () {
+                var checkStatus = table.checkStatus('id')//注意这个id不是html中table元素上的id，而是table:render中定义的id
+                if (checkStatus.data.length === 0) {
+                    layer.msg('请选择要授权的角色');
+                    return;
+                }
+                console.log(checkStatus.data[0]);
+                layer.open({
+                    type: 2
+                    ,title: '授权'
+                    ,content: 'authorization.html'
+                    ,maxmin: true
+                    ,area: ['500px', '450px']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            ,submit = layero.find('iframe').contents().find('#authSubmit');
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(authSubmit)', function(){
+                            var zTreeObj = $.fn.zTree.getZTreeObj("authTree");
+                            var authList = zTreeObj.getCheckedNodes(true);
+                            var authIds = [];
+                            authIds.push("id=" + checkStatus.data[0].id);
+                            authList.forEach(function(item){
+                                if(item.id > 0){
+                                    authIds.push("authId="+item.id);
+                                }
+                            });
+                            if (authIds.length <= 0) {
+                                layer.msg('请选择权限');
+                                return;
+                            }
+
+                            $.post('../../../role/savePermission', authIds.join("&"), function(result){
+                                if (result.data === null) {
+                                    result.data = 'submit[refresh]';
+                                }
+                                $.fn.Messager(result);
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                    ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
+                        var tree = layero.find('iframe').contents().find('#authTree');
+                        $scope.findPermission(checkStatus.data).success(
+                            function (response) {
+                                $scope.loadTree(response, tree);
+                                console.log(response);
+                            }
+                        );
+                        // var userForm = layero.find('iframe').contents().find('#roleForm');
+                        // for (var key in data) {//遍历json数据，并将数据复制到form表单对应的字段，这里要求
+                        //     userForm.find('#' + key).val(data[key]);
+                        // }
+                    }
+                })
             }
         };
         $('.layui-btn.layuiadmin-btn-role').on('click', function(){

@@ -8,11 +8,11 @@ app.service('roleService', function($http) {
     };
 
     this.add = function (entity) {
-        return $http.post('../../../role', entity)
+        return $http.post('../../../role', entity);
     };
 
     this.update = function (entity) {
-        return $http.put('../../../role', entity)
+        return $http.put('../../../role', entity);
     };
 
     this.delete = function (data) {
@@ -21,5 +21,13 @@ app.service('roleService', function($http) {
     
     this.delBatch = function (ids) {
         return $http.delete('../../../role/delBatch?ids=' + ids);
+    };
+
+    this.findPermission = function (data) {
+        return $http.post('../../../role/findPermission', data);
+    };
+
+    this.savePermission = function (authIds) {
+        return $http.post('../../../role/savePermission', authIds);
     }
 });

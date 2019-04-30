@@ -1,12 +1,15 @@
 package com.javaweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 实体类
@@ -23,6 +26,12 @@ public class Role implements Serializable{
 	private String role_name;//角色名称
 	private String remark;//备注
 	private Integer status;//状态:0  已禁用 1 正在使用
+	@JsonIgnoreProperties(value = {"roles"})
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "tb_role_permission",
+			joinColumns = @JoinColumn(name = "role_id"),
+			inverseJoinColumns = @JoinColumn(name = "permission_id")) //JoinTable注解主要是针对多对多关系的表
+	private Set<Permission> permissions = new HashSet<>(0);//权限资源列表
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人
@@ -85,6 +94,11 @@ public class Role implements Serializable{
 		this.update_time = update_time;
 	}
 
+	public Set<Permission> getPermissions() {
+		return permissions;
+	}
 
-
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
 }

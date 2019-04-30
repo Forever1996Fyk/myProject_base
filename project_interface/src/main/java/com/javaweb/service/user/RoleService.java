@@ -1,5 +1,6 @@
 package com.javaweb.service.user;
 
+import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import org.springframework.data.domain.Page;
@@ -55,4 +56,11 @@ public interface RoleService {
      * @param idsMap
      */
     void delBatch(Map<String, Object> idsMap);
+
+    /**
+     * 获取权限资源
+     * @param role
+     * @return
+     */
+    List<Permission> findPermission(Role role);
 }
