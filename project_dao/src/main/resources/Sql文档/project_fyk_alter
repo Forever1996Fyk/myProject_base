@@ -1,5 +1,6 @@
 #修改或者新增的字段
 ALTER TABLE tb_permission add url VARCHAR(200) DEFAULT NULL COMMENT '链接';
+ALTER TABLE tb_user add salt  VARCHAR(32) DEFAULT NULL COMMENT '盐';
 
 #修改表tb_role_permission, tb_user_role主键为自增
 ALTER TABLE tb_role_permission change id id int(32) not null AUTO_INCREMENT;

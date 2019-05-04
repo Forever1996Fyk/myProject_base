@@ -29,8 +29,8 @@ public class Permission implements Serializable{
 	private String remark;//备注
 	private String url;//链接
 	private Integer status;//状态:0  已禁用 1 正在使用
-	@ManyToMany(mappedBy = "permissions")//mappedBy表示:只能角色控制权限，权限无法控制角色
-	private Set<Role> roles = new HashSet<>(0);
+//	@ManyToMany(mappedBy = "permissions")//mappedBy表示:只能角色控制权限，权限无法控制角色
+//	private Set<Role> roles = new HashSet<>(0);
 	@Transient
 	private Map<String, Object> pPermission;//上级权限实体
 	@Transient
@@ -143,11 +143,36 @@ public class Permission implements Serializable{
 		this.selected = selected;
 	}
 
-	public Set<Role> getRoles() {
-		return roles;
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Permission) {
+			Permission permission = (Permission) obj;
+			return this.id.equals(permission.id)
+					&& this.level.equals(permission.level)
+					&& this.name.equals(permission.name)
+					&& this.sort.equals(permission.sort)
+					&& this.status.equals(permission.status)
+					&& this.url.equals(permission.url);
+		}
+		return super.equals(obj);
 	}
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
+	@Override
+	public int hashCode() {
+		int result = id.hashCode();
+		result = 31 * result + name.hashCode();
+		result = 31 * result + sort.hashCode();
+		result = 31 * result + level.hashCode();
+		result = 31 * result + (url != null ? url.hashCode() : 0);
+		result = 31 * result + status.hashCode();
+		return result;
 	}
+
+	//	public Set<Role> getRoles() {
+//		return roles;
+//	}
+//
+//	public void setRoles(Set<Role> roles) {
+//		this.roles = roles;
+//	}
 }

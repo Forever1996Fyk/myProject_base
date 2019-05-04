@@ -2,17 +2,15 @@ package com.javaweb.controller.user;
 
 import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
-import com.javaweb.pojo.User;
 import com.javaweb.service.user.RoleService;
-import com.javaweb.service.user.UserService;
-import constant.StatusConstant;
-import entity.PageResult;
-import entity.Result;
-import entity.StatusCode;
+import com.javaweb.constant.StatusConstant;
+import com.javaweb.entity.PageResult;
+import com.javaweb.entity.Result;
+import com.javaweb.entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import util.IdWorker;
+import com.javaweb.util.IdWorker;
 
 import java.util.HashSet;
 import java.util.List;
@@ -119,7 +117,7 @@ public class RoleController {
                                  @RequestParam(value = "authId", required = false) HashSet<Permission> permissions) {
         role.setPermissions(permissions);
         roleService.add(role);
-        return new Result(true, StatusCode.OK.getValue(), "查询成功");
+        return new Result(true, StatusCode.OK.getValue(), "保存成功");
     }
 
 }

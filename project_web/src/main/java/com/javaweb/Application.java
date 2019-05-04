@@ -3,7 +3,7 @@ package com.javaweb;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import util.IdWorker;
+import com.javaweb.util.IdWorker;
 
 /**
  * @program: project_web

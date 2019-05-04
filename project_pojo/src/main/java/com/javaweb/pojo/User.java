@@ -1,12 +1,13 @@
 package com.javaweb.pojo;
 
+import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.SQLDelete;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 实体类
@@ -16,6 +17,7 @@ import java.util.Date;
 @Entity
 @Table(name="tb_user")
 @SQLDelete(sql = "update tb_user set status = 2 where id = ?")//软删除
+@Proxy(lazy = false)
 public class User implements Serializable{
 
 	@Id
@@ -41,7 +43,13 @@ public class User implements Serializable{
 	private String address;//地址
 	private String idcard;//身份证号
 	private String remark;//备注
+	private String salt;//盐
 	private Integer status;//状态:0  已禁用 1 正在使用 2 已删除
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "tb_user_role",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>(0);
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人
@@ -216,6 +224,19 @@ public class User implements Serializable{
 		this.update_time = update_time;
 	}
 
+	public Set<Role> getRoles() {
+		return roles;
+	}
 
-	
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
 }

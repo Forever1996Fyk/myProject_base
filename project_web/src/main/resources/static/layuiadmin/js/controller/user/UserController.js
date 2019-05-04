@@ -41,6 +41,32 @@ app.controller('userController', function($scope, $controller, userService) {
         return userService.delBatch(ids);
     };
 
+    //查询角色
+    $scope.findRole = function (layero, userData) {
+        console.log(userData);
+        userService.findRole(userData).success(
+            function (response) {
+                var roleList = layero.find('iframe').contents().find('.roleList');
+                var roleForm = layero.find('iframe').contents().find('#roleForm');
+                var data = response.data;
+                if (data.length > 0) {
+                    roleForm.find("#id").val(userData.id);
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].selected === 1) {
+                            roleList.append('<input type="checkbox" name="roleId" lay-filter="checkRole" lay-skin="primary" checked title="'+ data[i].role_name +'" value="'+ data[i].id +'">');
+                        } else if (data[i].selected === 0 || !data[i].selected) {
+                            roleList.append('<input type="checkbox" name="roleId" lay-filter="checkRole" lay-skin="primary" title="'+ data[i].role_name +'" value="'+ data[i].id +'">');
+                        }
+                    }
+                    //获取新窗口对象
+                    var iframeWindow = layero.find('iframe')[0].contentWindow;
+                    //重新渲染
+                    iframeWindow.layui.form.render();//使用js拼接layui中的元素时,必须要此操作才能渲染
+                }
+            }
+        );
+    };
+
     //弹出层方法
     $scope.layerFrame = function (iframe, submitID, index, layero, tableObject) {
         var iframeWindow = window[iframe+ index]
@@ -48,20 +74,51 @@ app.controller('userController', function($scope, $controller, userService) {
 
         //监听提交
         iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
-            $scope.save(data.field).success(//保存事件
-                function (response) {
-                    if (response.code === 200) {
-                        layer.msg(response.message);
-                        layer.close(index); //关闭弹层
-                        //刷新表格
-                        tableObject.reload({
-                            page: '{curr:1}'
-                        });
-                    } else {
-                        layer.msg(response.message);
+            if (submitID === 'roleSubmit') {
+                var roleList = layero.find('iframe').contents().find('.roleList');
+                var checkElemList = roleList.children('input');
+                if (checkElemList.length > 0) {
+                    var roleIds = [];
+                    var id = roleList.find('#id').val();
+                    roleIds.push('id=' + id);
+                    for (var i = 0; i < checkElemList.length; i++) {
+                        if (checkElemList[i].checked) {
+                            roleIds.push('roleId=' + checkElemList[i].value);
+                        }
                     }
+                    $.post('../../../user/saveRole', roleIds.join('&'), function(response){
+                        if (response.data === null) {
+                            response.data = 'submit[refresh]';
+                        }
+                        if (response.code === 200) {
+                            layer.msg(response.message);
+                            layer.close(index); //关闭弹层
+                            //刷新表格
+                            tableObject.reload({
+                                page: '{curr:1}'
+                            });
+                        } else {
+                            layer.msg(response.message);
+                            return false;
+                        }
+                    });
                 }
-            );
+            } else {
+                $scope.save(data.field).success(//保存事件
+                    function (response) {
+                        if (response.code === 200) {
+                            layer.msg(response.message);
+                            layer.close(index); //关闭弹层
+                            //刷新表格
+                            tableObject.reload({
+                                page: '{curr:1}'
+                            });
+                        } else {
+                            layer.msg(response.message);
+                        }
+                    }
+                );
+            }
         });
 
         submit.trigger('click');
@@ -122,7 +179,7 @@ app.controller('userController', function($scope, $controller, userService) {
                     }
                     return result;
                 }}
-                , {title: '操作', width: 300, toolbar: '#btn', align: 'center'}
+                , {title: '操作', toolbar: '#btn', align: 'center'}
             ]]
 
         });
@@ -148,7 +205,7 @@ app.controller('userController', function($scope, $controller, userService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject);
+                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject, null);
                     }
                 });
             },
@@ -175,7 +232,7 @@ app.controller('userController', function($scope, $controller, userService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject);
+                        $scope.layerFrame('layui-layer-iframe', 'userSubmit', index, layero, tableObject, null);
                     }
                     ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
                         var userForm = layero.find('iframe').contents().find('#userForm');
@@ -231,6 +288,34 @@ app.controller('userController', function($scope, $controller, userService) {
                         }
                     }
                 );
+            },
+
+            //分配角色
+            assignRole: function () {
+                var checkStatus = table.checkStatus('id');//注意这个id不是html中table元素上的id，而是table:render中定义的id
+                if (checkStatus.data.length === 0) {
+                    layer.msg('请选择用户');
+                    return;
+                } else if (checkStatus.data.length > 1) {
+                    layer.msg('只能选择一条数据');
+                    return;
+                }
+                layer.open({
+                    type: 2
+                    ,title: '角色分配'
+                    ,content: 'assignRole.html'
+                    ,maxmin: true
+                    ,area: ['500px', '450px']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject, checkStatus.data);
+                    }
+                    ,success:function (layero, index) {//弹出框,弹出成功后操作
+
+                        $scope.findRole(layero, checkStatus.data[0]);
+                        //iframeWindow.layui.form.render();
+                    }
+                })
             }
         };
         $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){

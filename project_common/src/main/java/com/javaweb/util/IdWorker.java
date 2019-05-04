@@ -1,4 +1,4 @@
-package util;
+package com.javaweb.util;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;

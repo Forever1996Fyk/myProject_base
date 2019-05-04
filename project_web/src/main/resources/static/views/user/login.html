@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
   <link rel="stylesheet" href="../../layuiadmin/style/login.css" media="all">
 </head>
-<body>
+<body ng-app="project_base" ng-controller="loginController">
 
   <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
 
@@ -24,7 +24,7 @@
       <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
         <div class="layui-form-item">
           <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
-          <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" placeholder="用户名" class="layui-input">
+          <input type="text" name="account" id="LAY-user-login-username" lay-verify="required" placeholder="账号" class="layui-input">
         </div>
         <div class="layui-form-item">
           <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
@@ -48,7 +48,7 @@
           <a href="forget.html" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
         </div>
         <div class="layui-form-item">
-          <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+          <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="loginSubmit">登 入</button>
         </div>
         <div class="layui-trans layui-form-item layadmin-user-login-other">
           <label>社交账号登入</label>
@@ -86,57 +86,8 @@
     
   </div>
 
-  <script src="../../layuiadmin/layui/layui.js"></script>  
-  <script>
-  layui.config({
-    base: '../../layuiadmin/' //静态资源所在路径
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'user'], function(){
-    var $ = layui.$
-    ,setter = layui.setter
-    ,admin = layui.admin
-    ,form = layui.form
-    ,router = layui.router()
-    ,search = router.search;
-
-    form.render();
-
-    //提交
-    form.on('submit(LAY-user-login-submit)', function(obj){
-      //请求登入接口
-      admin.req({
-        url:layui.setter.base + 'json/user/login.js' //实际使用请改成服务端真实接口
-        ,data: obj.field
-        ,done: function(res){
-        
-          //请求成功后，写入 access_token
-          layui.data(setter.tableName, {
-            key: setter.request.tokenName
-            ,value: res.data.access_token
-          });
-          
-          //登入成功的提示与跳转
-          layer.msg('登入成功', {
-            offset: '15px'
-            ,icon: 1
-            ,time: 1000
-          }, function(){
-            location.href = '../views/index.html'; //后台主页
-          });
-        }
-      });
-      
-    });
-    
-    
-    //实际使用时记得删除该代码
-    layer.msg('为了方便演示，用户名密码可随意输入', {
-      offset: '15px'
-      ,icon: 1
-    });
-    
-  });
-  </script>
+  <script src="../../layuiadmin/js/common/commonJs.js"></script>
+  <script src="../../layuiadmin/js/controller/login/LoginController.js"></script>
+  <script src="../../layuiadmin/js/service/login/LoginService.js"></script>
 </body>
 </html>

@@ -1,10 +1,17 @@
 package com.javaweb.service.user;
 
+import com.javaweb.constant.Constant;
+import com.javaweb.dao.user.RoleDao;
 import com.javaweb.dao.user.UserDao;
+import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
-import constant.StatusConstant;
+import com.javaweb.constant.StatusConstant;
+import com.javaweb.util.MD5Util;
+import com.javaweb.util.StringUtil;
+import com.javaweb.util.shiro.ShiroKit;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import util.BeanUtil;
+import com.javaweb.util.BeanUtil;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +28,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @program: project_parent
@@ -33,6 +41,8 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private RoleDao roleDao;
 
     @Override
     public List<User> findAll() {
@@ -40,7 +50,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> findByParam(Map<String, Object> map) {
+        //查询条件
+        Specification<User> specifiaction = createSpecifiaction(map);
+        return userDao.findAll(specifiaction);
+    }
+
+    @Override
     public User add(User user) {
+        //生成随机盐
+        String salt = MD5Util.createSalt();
+        String pwdMD5;
+        //如果是后台管理员创建用户，则生成默认密码111111, 并将账号和随机盐作为盐对密码进行md5加密
+        if (StringUtil.isEmptyString(user.getPassword())) {
+            pwdMD5 = ShiroKit.md5(Constant.DEFAULT_PWD, user.getAccount() + salt);
+        } else {
+            pwdMD5 = ShiroKit.md5(user.getPassword(), user.getAccount() + salt);
+        }
+        user.setPassword(pwdMD5);
+        user.setSalt(salt);
         return userDao.save(user);
     }
 
@@ -73,6 +101,27 @@ public class UserServiceImpl implements UserService {
             List<String> list = CollectionUtils.arrayToList(ids);
             userDao.delBatch(list);
         }
+    }
+
+    @Override
+    public List<Role> findRole(User user) {
+        Set<Role> roles = user.getRoles();
+
+        Role entity = new Role();
+        entity.setStatus(StatusConstant.Normal.getValue());
+        Example<Role> example = Example.of(entity);
+        List<Role> roleList = roleDao.findAll(example);
+
+        if (!CollectionUtils.isEmpty(roles)) {
+            for (Role role : roleList) {
+                if (roles.contains(role)) { //使用集合的contains方法，需要重写对象的equals和hashcode方法
+                    role.setSelected(1);
+                } else {
+                    role.setSelected(0);
+                }
+            }
+        }
+        return roleList;
     }
 
     /**

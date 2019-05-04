@@ -26,4 +26,11 @@ public interface UserDao extends JpaRepository<User, String>, JpaSpecificationEx
     @Query("update User set status = 2 where id in (?1)")
     void delBatch(List<String> ids);
 
+    /**
+     * 根据账号查找用户
+     * @param account
+     * @return
+     */
+    List<User> findByAccount(String account);
+
 }

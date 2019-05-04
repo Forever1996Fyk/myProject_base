@@ -1,17 +1,18 @@
 package com.javaweb.controller.user;
 
+import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import com.javaweb.service.user.UserService;
-import constant.StatusConstant;
-import entity.PageResult;
-import entity.Result;
-import entity.StatusCode;
+import com.javaweb.constant.StatusConstant;
+import com.javaweb.entity.PageResult;
+import com.javaweb.entity.Result;
+import com.javaweb.entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import util.IdWorker;
+import com.javaweb.util.IdWorker;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -93,4 +94,26 @@ public class UserController {
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
     }
 
+    /**
+     * 获取用户的角色
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/findRole", method = RequestMethod.POST)
+    public Result findRole(@RequestBody User user) {
+        return new Result(true, StatusCode.OK.getValue(), "查询成功", userService.findRole(user));
+    }
+
+    /**
+     * 获取用户的角色
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/saveRole", method = RequestMethod.POST)
+    public Result saveRole(@RequestParam(value = "id", required = true) User user,
+                           @RequestParam(value = "roleId", required = false) HashSet<Role> roles) {
+        user.setRoles(roles);
+        userService.add(user);
+        return new Result(true, StatusCode.OK.getValue(), "保存成功");
+    }
 }

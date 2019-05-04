@@ -2,14 +2,13 @@ package com.javaweb.controller.user;
 
 import com.javaweb.pojo.Permission;
 import com.javaweb.service.user.PermissionService;
-import constant.StatusConstant;
-import entity.PageResult;
-import entity.Result;
-import entity.StatusCode;
+import com.javaweb.entity.PageResult;
+import com.javaweb.entity.Result;
+import com.javaweb.entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import util.IdWorker;
+import com.javaweb.util.IdWorker;
 
 import java.util.Map;
 

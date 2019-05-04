@@ -1,5 +1,6 @@
 package com.javaweb.service.user;
 
+import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import org.springframework.data.domain.Page;
 
@@ -19,6 +20,13 @@ public interface UserService {
      * @return
      */
     List<User> findAll();
+
+    /**
+     * 根据条件查询用户
+     * @param map
+     * @return
+     */
+    List<User> findByParam(Map<String, Object> map);
 
     /**
      * 新增用户
@@ -54,4 +62,11 @@ public interface UserService {
      * @param idsMap
      */
     void delBatch(Map<String, Object> idsMap);
+
+    /**
+     * 查询角色
+     * @param user
+     * @return
+     */
+    List<Role> findRole(User user);
 }

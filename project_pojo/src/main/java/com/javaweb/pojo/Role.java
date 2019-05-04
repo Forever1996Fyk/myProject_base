@@ -1,6 +1,5 @@
 package com.javaweb.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
 
@@ -8,7 +7,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,12 +24,13 @@ public class Role implements Serializable{
 	private String role_name;//角色名称
 	private String remark;//备注
 	private Integer status;//状态:0  已禁用 1 正在使用
-	@JsonIgnoreProperties(value = {"roles"})
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "tb_role_permission",
 			joinColumns = @JoinColumn(name = "role_id"),
 			inverseJoinColumns = @JoinColumn(name = "permission_id")) //JoinTable注解主要是针对多对多关系的表
 	private Set<Permission> permissions = new HashSet<>(0);//权限资源列表
+	@Transient
+	private Integer selected;//判断是否被选
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人
@@ -100,5 +99,33 @@ public class Role implements Serializable{
 
 	public void setPermissions(Set<Permission> permissions) {
 		this.permissions = permissions;
+	}
+
+	public Integer getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Integer selected) {
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Role role = (Role) o;
+
+		if (!id.equals(role.id)) return false;
+		if (!role_name.equals(role.role_name)) return false;
+		return status.equals(role.status);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id.hashCode();
+		result = 31 * result + role_name.hashCode();
+		result = 31 * result + status.hashCode();
+		return result;
 	}
 }

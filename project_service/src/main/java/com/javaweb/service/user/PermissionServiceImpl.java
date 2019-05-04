@@ -2,11 +2,9 @@ package com.javaweb.service.user;
 
 import com.javaweb.dao.user.PermissionDao;
 import com.javaweb.pojo.Permission;
-import com.javaweb.pojo.Role;
-import constant.StatusConstant;
+import com.javaweb.constant.StatusConstant;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import util.BeanUtil;
+import com.javaweb.util.BeanUtil;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,7 +21,6 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @program: project_parent

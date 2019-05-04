@@ -1,4 +1,4 @@
-package constant;
+package com.javaweb.constant;
 
 /**
  * @program: project_parent

@@ -9,3 +9,6 @@
 ###### 权限管理问题：https://segmentfault.com/a/1190000010637751 https://www.cnblogs.com/zhaojiatao/p/8482998.html
 ###### 参考jpa更新操作遇到的问题：https://carsymor.iteye.com/blog/2398653 https://blog.csdn.net/xubaifu1997/article/details/77162271
 ###### 注解开发：https://blog.csdn.net/briblue/article/details/73824058
+###### shiro框架 PrincipalCollection集合参考资料 https://blog.csdn.net/yifansj/article/details/77513047
+###### MD5加密参考(暂时没用)：https://blog.csdn.net/dingsai88/article/details/51637977
+###### map,object相互转换工具类：https://blog.csdn.net/dcb_ripple/article/details/73250050

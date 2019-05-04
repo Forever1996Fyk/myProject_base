@@ -1,4 +1,4 @@
-package entity;
+package com.javaweb.entity;
 
 import java.util.List;
 

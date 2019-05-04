@@ -1,4 +1,4 @@
-package entity;
+package com.javaweb.entity;
 
 /**
  * @program: project_parent

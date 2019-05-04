@@ -1,4 +1,4 @@
-package util;
+package com.javaweb.util;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;

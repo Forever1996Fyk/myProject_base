@@ -19,5 +19,17 @@ app.controller('baseController', function ($scope) {
         , page: true //开启分页
         , limits: [10, 20, 30]
         , limit: 10
+    };
+
+    $scope.layui = {
+        layui: function () {
+            return layui.config({
+                        base: '../../layuiadmin/' //静态资源所在路径
+                    }).extend({
+                        index: 'lib/index' //主入口模块
+                    });
+        }
     }
-})
+
+
+});

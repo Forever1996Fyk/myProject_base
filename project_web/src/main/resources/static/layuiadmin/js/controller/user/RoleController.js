@@ -42,14 +42,33 @@ app.controller('roleController', function($scope, $controller, roleService) {
     };
 
     //弹出层方法
-    $scope.layerFrame = function (iframe, submitID, index, layero, tableObject) {
+    $scope.layerFrame = function (iframe, submitID, index, layero, tableObject, checkData) {
         var iframeWindow = window[iframe + index]
             ,submit = layero.find('iframe').contents().find('#'+ submitID);
 
         //监听提交
-        iframeWindow.layui.form.on('submit('+ submitID +')', function(){
-            $scope.save(data.field).success(//保存事件
-                function (response) {
+        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+            if (submitID === "authSubmit") {
+                var zTreeObj = $.fn.zTree.getZTreeObj("authTree");
+                var authList = zTreeObj.getCheckedNodes(true);
+                var authIds = [];
+                if (checkData !== null) {
+                    authIds.push("id=" + checkData[0].id);
+                }
+                authList.forEach(function(item){
+                    if(item.id > 0){
+                        authIds.push("authId="+item.id);
+                    }
+                });
+                if (authIds.length <= 0) {
+                    layer.msg('请选择权限');
+                    return;
+                }
+
+                $.post('../../../role/savePermission', authIds.join("&"), function(response){
+                    if (response.data === null) {
+                        response.data = 'submit[refresh]';
+                    }
                     if (response.code === 200) {
                         layer.msg(response.message);
                         layer.close(index); //关闭弹层
@@ -59,17 +78,38 @@ app.controller('roleController', function($scope, $controller, roleService) {
                         });
                     } else {
                         layer.msg(response.message);
+                        return false;
                     }
-                }
-            );
+                });
+            } else {
+                $scope.save(data.field).success(//保存事件
+                    function (response) {
+                        if (response.code === 200) {
+                            layer.msg(response.message);
+                            layer.close(index); //关闭弹层
+                            //刷新表格
+                            tableObject.reload({
+                                page: '{curr:1}'
+                            });
+                        } else {
+                            layer.msg(response.message);
+                        }
+                    }
+                );
+            }
         });
 
         submit.trigger('click');
     };
 
     //获取该角色的权限
-    $scope.findPermission = function (data) {
-        return roleService.findPermission(data[0]);
+    $scope.findPermission = function (data, tree) {
+        console.log(data);
+        roleService.findPermission(data[0]).success(
+            function (response) {
+                $scope.loadTree(response, tree);
+            }
+        );
     };
     
     //保存权限
@@ -104,18 +144,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
             if(item.pid === 0){
                 menu.open = true;
             }
-            if(item.url.indexOf("/index") !== -1 && keyPid[item.id]){
-                var index = {
-                    id: item.id*-1,
-                    pId: item.id,
-                    name: "列表"
-                };
-                if(item.selected === "1"){
-                    index.checked = true;
-                }
-                zNodes.push(index);
-            }
-            if(item.selected === "1"){
+            if(item.selected === 1){
                 menu.checked = true;
             }
             zNodes.push(menu);
@@ -123,6 +152,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
         $.fn.zTree.init(tree, setting, zNodes);
     };
 
+    //layui插件
   layui.use(['table', 'layer', 'form'], function() {
         var layer = layui.layer;
         var table = layui.table;
@@ -158,7 +188,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
         /*
         表格点击事件写法,其中tool('这是表格的lay-filter'),监听点击事件         */
         table.on('tool(tblist)', function (obj) {
-            if (obj.event == 'edit') {
+            if (obj.event === 'edit') {
                 active.edit(obj.data);
             } else {
                 active.delete(obj.data);
@@ -177,7 +207,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject);
+                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject, null);
                     }
                 });
             },
@@ -201,7 +231,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject);
+                        $scope.layerFrame('layui-layer-iframe', 'roleSubmit', index, layero, tableObject, null);
                     }
                     ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
                         var userForm = layero.find('iframe').contents().find('#roleForm');
@@ -265,8 +295,10 @@ app.controller('roleController', function($scope, $controller, roleService) {
                 if (checkStatus.data.length === 0) {
                     layer.msg('请选择要授权的角色');
                     return;
+                } else if (checkStatus.data.length > 1) {
+                    layer.msg('只能选择一条数据');
+                    return;
                 }
-                console.log(checkStatus.data[0]);
                 layer.open({
                     type: 2
                     ,title: '授权'
@@ -275,47 +307,11 @@ app.controller('roleController', function($scope, $controller, roleService) {
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
                     ,yes: function(index, layero){
-                        var iframeWindow = window['layui-layer-iframe' + index]
-                            ,submit = layero.find('iframe').contents().find('#authSubmit');
-
-                        //监听提交
-                        iframeWindow.layui.form.on('submit(authSubmit)', function(){
-                            var zTreeObj = $.fn.zTree.getZTreeObj("authTree");
-                            var authList = zTreeObj.getCheckedNodes(true);
-                            var authIds = [];
-                            authIds.push("id=" + checkStatus.data[0].id);
-                            authList.forEach(function(item){
-                                if(item.id > 0){
-                                    authIds.push("authId="+item.id);
-                                }
-                            });
-                            if (authIds.length <= 0) {
-                                layer.msg('请选择权限');
-                                return;
-                            }
-
-                            $.post('../../../role/savePermission', authIds.join("&"), function(result){
-                                if (result.data === null) {
-                                    result.data = 'submit[refresh]';
-                                }
-                                $.fn.Messager(result);
-                            });
-                        });
-
-                        submit.trigger('click');
+                        $scope.layerFrame('layui-layer-iframe', 'authSubmit', index, layero, tableObject, checkStatus.data);
                     }
                     ,success:function (layero, index) {//弹出框,弹出成功后操作,向表单赋值
                         var tree = layero.find('iframe').contents().find('#authTree');
-                        $scope.findPermission(checkStatus.data).success(
-                            function (response) {
-                                $scope.loadTree(response, tree);
-                                console.log(response);
-                            }
-                        );
-                        // var userForm = layero.find('iframe').contents().find('#roleForm');
-                        // for (var key in data) {//遍历json数据，并将数据复制到form表单对应的字段，这里要求
-                        //     userForm.find('#' + key).val(data[key]);
-                        // }
+                        $scope.findPermission(checkStatus.data, tree);
                     }
                 })
             }

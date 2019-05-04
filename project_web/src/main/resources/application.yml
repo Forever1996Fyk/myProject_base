@@ -12,6 +12,7 @@ spring:
   jpa:
     database: mysql
     show-sql: true
+    open-in-view: true #其实是之前的openEntityManagerInViewInterceptor，解决在Spring MVC与JPA之间Session的声明周期问题
 #  mvc:
 #    static-path-pattern: /static/**
 #    view:
