@@ -36,6 +36,14 @@ public class ShiroConfig {
      * 1.一个URL可以配置多个Filter,使用逗号分隔
      * 2.当设置多个过滤器,全部验证通过,才视为通过
      * 3.部分过滤器可指定参数,如perms,roles
+     *
+     *  过滤规则（注意优先级）
+     *  —anon 无需认证(登录)可访问
+     * 	—authc 必须认证才可访问
+     * 	—perms[标识] 拥有资源权限才可访问
+     * 	—role 拥有角色权限才可访问
+     * 	—user 认证和自动登录可访问
+     *
      * @param securityManager
      * @return
      */
