@@ -46,7 +46,7 @@ public class User implements Serializable{
 	private String remark;//备注
 	private String salt;//盐
 	private Integer status;//状态:0  已禁用 1 正在使用 2 已删除
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)//这是不使用lazy，因为会出现懒加载问题
 	@JoinTable(name = "tb_user_role",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
