@@ -3,7 +3,7 @@ package com.javaweb.controller.user;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import com.javaweb.service.user.UserService;
-import com.javaweb.constant.StatusConstant;
+import com.javaweb.enums.StatusEnum;
 import com.javaweb.entity.PageResult;
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
@@ -47,7 +47,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public Result add(@RequestBody User user) {
         user.setId(String.valueOf(idWorker.nextId()));
-        user.setStatus(StatusConstant.Normal.getValue());
+        user.setStatus(StatusEnum.Normal.getValue());
         return new Result(true,  StatusCode.OK.getValue(), "新增成功", userService.add(user));
     }
 

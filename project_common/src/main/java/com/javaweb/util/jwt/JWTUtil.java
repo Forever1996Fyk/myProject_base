@@ -16,13 +16,13 @@ import java.util.Date;
  * @create: 2019-05-02 17:26
  **/
 public class JWTUtil {
-    //过期时间5分钟
-    private static final long EXPIRE_TIME = 5 * 60 * 1000;
+    //过期时间30分钟
+    private static final long EXPIRE_TIME = 30 * 60 * 1000;
 
     /**
      * 生成签名,5min后过期
      * @param account 用户账号
-     * @param pwd 用户密码
+     * @param secret 用户密码
      * @return
      */
     public static String sign(String account, String secret) {

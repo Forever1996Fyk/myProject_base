@@ -7,15 +7,13 @@ app.controller('loginController', function ($scope, loginService) {
     $scope.login = function (data) {
         return loginService.login(data);
     };
-    
+
     layui.config({
         base: '../../layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'user'], function(){
-        var setter = layui.setter
-            ,admin = layui.admin
-            ,form = layui.form;
+        var form = layui.form;
 
         form.render();
 
@@ -27,17 +25,14 @@ app.controller('loginController', function ($scope, loginService) {
                     console.log(response);
                     if (response.code === 200) {
                         //请求成功后，写入 access_token
-                        layui.data(setter.tableName, {
-                            key: setter.request.tokenName
-                            ,value: response.data
-                        });
+                        localStorage.setItem("access_token", response.data);
                         //登入成功的提示与跳转
                         layer.msg(response.message, {
                             offset: '15px'
                             ,icon: 1
                             ,time: 1000
                         }, function () {
-                            location.href = '../../views/index.html';
+                            location.href = '/index';
                         });
                     } else {
                         return layer.msg(response.message);

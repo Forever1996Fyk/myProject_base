@@ -46,24 +46,24 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
         //验证过滤器
-        Map<String, Filter> filtersMap = shiroFilterFactoryBean.getFilters();
+        Map<String, Filter> filtersMap = new LinkedHashMap<>();
         filtersMap.put("jwt", new JWTFilter());
         shiroFilterFactoryBean.setFilters(filtersMap);
 
         //拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        //用户需要角色权限 "user"
-//        filterChainDefinitionMap.put("/user/**", "roles[user]");
-//        filterChainDefinitionMap.put("/permission/**", "roles[permission]");
-//        filterChainDefinitionMap.put("/role/**", "roles[role]");
+
+        filterChainDefinitionMap.put("/static/**", "anon");
 
         //访问错误页面不需要通过filter anon表示权限通过
         filterChainDefinitionMap.put("/401", "anon");
         filterChainDefinitionMap.put("/402", "anon");
 
-        filterChainDefinitionMap.put("/**", "anon");
         //其他过滤器
-        filterChainDefinitionMap.put("/**", "jwt");
+        filterChainDefinitionMap.put("/menu", "jwt");
+        filterChainDefinitionMap.put("/user/**", "jwt");
+        filterChainDefinitionMap.put("/role/**", "jwt");
+        filterChainDefinitionMap.put("/permission/**", "jwt");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
@@ -77,7 +77,8 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        //设置realmsecurityManager.setRealm(shiroRealm());
+        //设置realm
+        securityManager.setRealm(shiroRealm());
 
         //注入缓存管理器
         securityManager.setCacheManager(ehCacheManager());

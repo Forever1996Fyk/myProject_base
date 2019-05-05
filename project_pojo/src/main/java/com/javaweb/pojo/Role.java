@@ -1,6 +1,7 @@
 package com.javaweb.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name="tb_role")
 @SQLDelete(sql = "update tb_role set status = 2 where id = ?")//软删除
+@Proxy(lazy = false)
 public class Role implements Serializable{
 
 	@Id

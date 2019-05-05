@@ -1,8 +1,9 @@
 package com.javaweb.util.jwt;/**
- * Created by 恺b on 2019/5/2.
+ * Created by YuKai Fan on 2019/5/2.
  */
 
 import com.javaweb.entity.StatusCode;
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -71,8 +72,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         if (isLoginAttempt(request, response)) {
             try {
                 executeLogin(request, response);
+                return true;
             } catch (Exception e) {
-
+                response401(request, response);
+                return false;
             }
         }
         return true;

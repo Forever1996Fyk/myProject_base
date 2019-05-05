@@ -200,7 +200,7 @@ app.controller('userController', function($scope, $controller, userService) {
                 layer.open({
                     type: 2
                     ,title: '添加用户'
-                    ,content: 'userform.html'
+                    ,content: '/userManager/userform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']

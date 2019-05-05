@@ -3,7 +3,7 @@ package com.javaweb.controller.user;
 import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
 import com.javaweb.service.user.RoleService;
-import com.javaweb.constant.StatusConstant;
+import com.javaweb.enums.StatusEnum;
 import com.javaweb.entity.PageResult;
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
@@ -48,7 +48,7 @@ public class RoleController {
     @RequestMapping(method = RequestMethod.POST)
     public Result add(@RequestBody Role role) {
         role.setId(String.valueOf(idWorker.nextId()));
-        role.setStatus(StatusConstant.Normal.getValue());
+        role.setStatus(StatusEnum.Normal.getValue());
         return new Result(true,  StatusCode.OK.getValue(), "新增成功", roleService.add(role));
     }
 

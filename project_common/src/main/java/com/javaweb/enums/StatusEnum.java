@@ -1,4 +1,4 @@
-package com.javaweb.constant;
+package com.javaweb.enums;
 
 /**
  * @program: project_parent
@@ -6,11 +6,11 @@ package com.javaweb.constant;
  * @author: YuKai Fan
  * @create: 2019-04-25 15:49
  **/
-public enum  StatusConstant {
+public enum StatusEnum {
     Delete(2),Normal(1),Disable(0);
     public Integer value;
 
-    StatusConstant(Integer value) {
+    StatusEnum(Integer value) {
         this.value = value;
     }
 

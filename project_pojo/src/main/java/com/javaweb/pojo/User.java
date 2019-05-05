@@ -1,5 +1,6 @@
 package com.javaweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.SQLDelete;
 
@@ -49,6 +50,7 @@ public class User implements Serializable{
 	@JoinTable(name = "tb_user_role",
 			joinColumns = @JoinColumn(name = "user_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JsonIgnore
 	private Set<Role> roles = new HashSet<>(0);
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间

@@ -2,7 +2,7 @@ package com.javaweb.service.user;
 
 import com.javaweb.dao.user.PermissionDao;
 import com.javaweb.pojo.Permission;
-import com.javaweb.constant.StatusConstant;
+import com.javaweb.enums.StatusEnum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -135,7 +135,7 @@ public class PermissionServiceImpl implements PermissionService {
                 }
 
                 //状态 默认查询没有删除的数据
-                predicateList.add(criteriaBuilder.notEqual(root.get("status").as(String.class), StatusConstant.Delete.getValue()));
+                predicateList.add(criteriaBuilder.notEqual(root.get("status").as(String.class), StatusEnum.Delete.getValue()));
 
                 //new一个数组作为最终返回值的条件
                 Predicate[] predicate = new Predicate[predicateList.size()];

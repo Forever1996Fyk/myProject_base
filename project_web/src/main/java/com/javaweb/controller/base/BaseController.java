@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class BaseController {
 
     @RequestMapping("/")
-    public String index() {
-        return "redirect:views/index.html";
+    public String login() {
+        return "views/user/login";
     }
 
-    @RequestMapping(value = "/index",method = RequestMethod.GET)
-    public String test() {
-        return "index";
-    }
+//    @RequestMapping("/index")
+//    public String index() {
+//        return "views/index";
+//    }
+
 }

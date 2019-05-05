@@ -12,4 +12,16 @@ public class Constant {
 
     //默认密码
     public static final String DEFAULT_PWD = "111111";
+
+    //超级管理员id
+    public static String ADMIN_ID = "1";
+
+    //超级管理员用户名
+    public static String ADMIN_NAME = "admin";
+
+    //超级管理员角色id
+    public static String ADMIN_ROLE_ID = "1";
+
+    //超级管理员角色名称
+    public static String ADMIN_ROLE_NAME = "admin";
 }

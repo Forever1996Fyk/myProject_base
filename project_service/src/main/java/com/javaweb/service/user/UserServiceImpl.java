@@ -5,7 +5,7 @@ import com.javaweb.dao.user.RoleDao;
 import com.javaweb.dao.user.UserDao;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
-import com.javaweb.constant.StatusConstant;
+import com.javaweb.enums.StatusEnum;
 import com.javaweb.util.MD5Util;
 import com.javaweb.util.StringUtil;
 import com.javaweb.util.shiro.ShiroKit;
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = user.getRoles();
 
         Role entity = new Role();
-        entity.setStatus(StatusConstant.Normal.getValue());
+        entity.setStatus(StatusEnum.Normal.getValue());
         Example<Role> example = Example.of(entity);
         List<Role> roleList = roleDao.findAll(example);
 
@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
                 }
 
                 //状态 默认查询没有删除的数据
-                predicateList.add(criteriaBuilder.notEqual(root.get("status").as(String.class), StatusConstant.Delete.getValue()));
+                predicateList.add(criteriaBuilder.notEqual(root.get("status").as(String.class), StatusEnum.Delete.getValue()));
 
                 //new一个数组作为最终返回值的条件
                 Predicate[] predicate = new Predicate[predicateList.size()];

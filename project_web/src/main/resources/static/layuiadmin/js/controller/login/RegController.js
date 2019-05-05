@@ -1,10 +1,7 @@
 /**
  * Created by YuKaiFan on 2019/5/3.
  */
-app.controller('regController', function ($scope, $controller, regService) {
-
-    //这其实是一种伪继承，并不是真正的继承，是通过传递scope，将基础controller的scope传递赋给子controller的scope,从而达到继承的效果
-    $controller('baseController', {$scope:$scope});//第一个参数：表示要继承的controller;
+app.controller('regController', function ($scope, regService) {
 
     $scope.regSubmit = function (data) {
         return regService.regSubmit(data);

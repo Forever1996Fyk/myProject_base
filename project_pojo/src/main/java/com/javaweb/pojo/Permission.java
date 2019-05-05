@@ -1,14 +1,12 @@
 package com.javaweb.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 实体类
@@ -18,6 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name="tb_permission")
 @SQLDelete(sql = "update tb_permission set status = 2 where id = ?")//软删除
+@Proxy(lazy = false)
 public class Permission implements Serializable{
 
 	@Id
@@ -32,7 +31,9 @@ public class Permission implements Serializable{
 //	@ManyToMany(mappedBy = "permissions")//mappedBy表示:只能角色控制权限，权限无法控制角色
 //	private Set<Role> roles = new HashSet<>(0);
 	@Transient
-	private Map<String, Object> pPermission;//上级权限实体
+	private Map<String, Object> children = new HashMap<>();//下级权限实体
+	@Transient
+	private Map<String, Object> pPermission = new HashMap<>();//上级权限实体
 	@Transient
 	private Integer selected;//判断权限是否被选中
 	private String create_user_id;//创建人
@@ -125,6 +126,14 @@ public class Permission implements Serializable{
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public Map<String, Object> getChildren() {
+		return children;
+	}
+
+	public void setChildren(Map<String, Object> children) {
+		this.children = children;
 	}
 
 	public Map<String, Object> getpPermission() {

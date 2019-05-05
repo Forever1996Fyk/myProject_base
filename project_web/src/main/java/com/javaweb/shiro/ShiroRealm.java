@@ -1,11 +1,13 @@
 package com.javaweb.shiro;/**
- * Created by 恺b on 2019/5/2.
+ * Created by YuKai Fan on 2019/5/2.
  */
 
+import com.javaweb.constant.Constant;
 import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import com.javaweb.service.login.LoginService;
+import com.javaweb.service.user.RoleService;
 import com.javaweb.util.jwt.JWTToken;
 import com.javaweb.util.jwt.JWTUtil;
 import org.apache.shiro.authc.AuthenticationException;
@@ -16,7 +18,9 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @program: project_parent
@@ -24,9 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author: Yukai Fan
  * @create: 2019-05-02 20:08
  **/
+@Component
 public class ShiroRealm extends AuthorizingRealm {
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private RoleService roleService;
 
     /**
      * 必须重写此方法，不然shiro会报错
@@ -68,7 +75,7 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new AuthenticationException("Account or Password error! 用户账号或者密码错误");
         }
 
-        return new SimpleAuthenticationInfo(token, token, "login_realm");//第一个参数：对象主体;第二个参数：对象凭据;第三个参数：realm名称
+        return new SimpleAuthenticationInfo(user, token, "login_realm");//第一个参数：对象主体;第二个参数：对象凭据;第三个参数：realm名称
     }
 
     /**
@@ -106,6 +113,12 @@ public class ShiroRealm extends AuthorizingRealm {
         User user = loginService.findUserByAccount(account);
 
         SimpleAuthorizationInfo auth = new SimpleAuthorizationInfo();
+        //管理员拥有所有权限
+        if (user.getId().equals(Constant.ADMIN_ID)) {
+            auth.addRole(Constant.ADMIN_ROLE_NAME);
+            auth.addStringPermission("*:*:*");
+            return auth;
+        }
 
         //设置相应角色的权限信息
         for (Role role : user.getRoles()) {
