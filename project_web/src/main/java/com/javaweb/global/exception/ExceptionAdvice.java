@@ -41,7 +41,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)
     public Result handle401(ShiroException e) {
-        return new Result(false, StatusCode.ACCESSERROR.getValue(), "shiro异常", null);
+        return new Result(false, StatusCode.ACCESSERROR.getValue(), e.getMessage(), null);
     }
 
     /**

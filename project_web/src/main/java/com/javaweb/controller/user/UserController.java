@@ -7,6 +7,7 @@ import com.javaweb.enums.StatusEnum;
 import com.javaweb.entity.PageResult;
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -113,7 +114,7 @@ public class UserController {
     public Result saveRole(@RequestParam(value = "id", required = true) User user,
                            @RequestParam(value = "roleId", required = false) HashSet<Role> roles) {
         user.setRoles(roles);
-        userService.add(user);
+        userService.update(user);
         return new Result(true, StatusCode.OK.getValue(), "保存成功");
     }
 }

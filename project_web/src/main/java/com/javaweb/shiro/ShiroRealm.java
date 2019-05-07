@@ -3,6 +3,7 @@ package com.javaweb.shiro;/**
  */
 
 import com.javaweb.constant.Constant;
+import com.javaweb.enums.StatusEnum;
 import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
@@ -10,14 +11,12 @@ import com.javaweb.service.login.LoginService;
 import com.javaweb.service.user.RoleService;
 import com.javaweb.util.jwt.JWTToken;
 import com.javaweb.util.jwt.JWTUtil;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
  * @author: Yukai Fan
  * @create: 2019-05-02 20:08
  **/
-@Component
 public class ShiroRealm extends AuthorizingRealm {
     @Autowired
     private LoginService loginService;
@@ -42,7 +40,7 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof JWTToken;
+        return token instanceof UsernamePasswordToken;
     }
 
     /**
@@ -54,28 +52,31 @@ public class ShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
 
-        //获取token
-        String token = (String) auth.getCredentials();
-        //根据token获取account,用于和数据库进行对比
-        String account = JWTUtil.getAccount(token);
-        if (account == null) {
-            throw new AuthenticationException("token invalid! token无效");
-        }
+        UsernamePasswordToken token = (UsernamePasswordToken) auth;
+
+        //获取JWT token
+//        String token = (String) auth.getCredentials();
+//        //根据token获取account,用于和数据库进行对比
+//        String account = JWTUtil.getAccount(token);
+//        if (account == null) {
+//            throw new AuthenticationException("token invalid! token无效");
+//        }
 
         //通过account从数据库中查找user对象
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro也是有时间间隔机制，2分钟不会重复执行该方法
         //todo 从缓存中取出
-        User user = loginService.findUserByAccount(account);
+        User user = loginService.findUserByAccount(token.getUsername());
 
         if (user == null) {
-            throw new AuthenticationException("User didn't existed! 用户不存在");
+            throw new UnknownAccountException("用户账号错误");
+        } else if (!user.getStatus().equals(StatusEnum.Normal.getValue())) {
+            throw new LockedAccountException("用户账号已无效");
         }
 
-        if (!JWTUtil.verify(token, account, user.getPassword())) {
-            throw new AuthenticationException("Account or Password error! 用户账号或者密码错误");
-        }
+        //对盐进行加密处理
+        ByteSource salt = ByteSource.Util.bytes(user.getSalt());
 
-        return new SimpleAuthenticationInfo(user, token, "login_realm");//第一个参数：对象主体;第二个参数：对象凭据;第三个参数：realm名称
+        return new SimpleAuthenticationInfo(user, user.getPassword(), salt, getName());//第一个参数：对象主体;第二个参数：对象凭据;第三个参数：realm名称
     }
 
     /**
@@ -106,17 +107,15 @@ public class ShiroRealm extends AuthorizingRealm {
          *
          */
 
-        //根据身份信息获取account
-        String account = JWTUtil.getAccount(principals.toString());
-
         //todo 下面代码中，用户信息可以从缓存中取出
-        User user = loginService.findUserByAccount(account);
+        //获取用户principals对象
+        User user = (User) principals.getPrimaryPrincipal();
 
         SimpleAuthorizationInfo auth = new SimpleAuthorizationInfo();
         //管理员拥有所有权限
         if (user.getId().equals(Constant.ADMIN_ID)) {
             auth.addRole(Constant.ADMIN_ROLE_NAME);
-            auth.addStringPermission("*:*:*");
+            auth.addStringPermission("*:*:*");//这个对应了@RequiresPermissions('xxx')注解上的名称,只有与该名称匹配上,才有该权限。*:*:*，表示所有权限
             return auth;
         }
 
@@ -125,7 +124,7 @@ public class ShiroRealm extends AuthorizingRealm {
             //设置角色
             auth.addRole(role.getRole_name());
             for (Permission permission : role.getPermissions()) {
-                auth.addStringPermission(permission.getName());
+                auth.addStringPermission(permission.getPerm());//注意:perm这个字段不能有null,否则访问请求会报错
             }
         }
 

@@ -20,6 +20,16 @@ public class BaseController {
         return "views/user/login";
     }
 
+    @RequestMapping("/reg")
+    public String reg() {
+        return "views/user/reg";
+    }
+
+    @RequestMapping("/noAuth")
+    public String noAuth() {
+        return "views/user/error";
+    }
+
 //    @RequestMapping("/index")
 //    public String index() {
 //        return "views/index";

@@ -36,7 +36,7 @@ app.controller('regController', function ($scope, regService) {
                             , icon: 1
                             , time: 1000
                         }, function () {
-                            location.hash = '/user/login'; //跳转到登入页
+                            location.hash = '/'; //跳转到登入页
                         });
                     } else {
                         return layer.msg(response.message);

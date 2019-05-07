@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @program: project_parent
@@ -26,5 +27,13 @@ public interface RoleDao extends JpaRepository<Role, String>, JpaSpecificationEx
     @Transactional
     @Query("update Role set status = 2 where id in (?1)")
     void delBatch(List<String> ids);
+
+    /**
+     * 获取用户角色
+     * @param userId
+     * @param status
+     * @return
+     */
+    Set<Role> findByUsers_idAndStatus(String userId, Integer status);
 
 }

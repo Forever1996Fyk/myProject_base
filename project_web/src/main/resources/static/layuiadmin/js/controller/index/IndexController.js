@@ -4,11 +4,19 @@
 app.controller('indexController', function ($scope, indexService) {
 
     $scope.getMenu = function () {
-        var token = localStorage.getItem("access_token");
-        indexService.getMenu(token).success(
+         indexService.getMenu().success(
             function (response) {
                 console.log(response);
-                $scope.menuList = response.treeMap;
+                $scope.menuList = response.data.treeMap;
+                $scope.user = response.data.user;
+            }
+        );
+    };
+    
+    $scope.logout = function () {
+        indexService.logout().success(
+            function (response) {
+                location.href = '/';
             }
         );
     };
@@ -17,6 +25,8 @@ app.controller('indexController', function ($scope, indexService) {
         base: '../layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use('index', function () {
-    })
+    }).use(['index', 'element'], function () {
+        //$scope.getMenu();
+    });
+
 });

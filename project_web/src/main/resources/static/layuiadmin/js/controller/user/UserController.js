@@ -200,7 +200,7 @@ app.controller('userController', function($scope, $controller, userService) {
                 layer.open({
                     type: 2
                     ,title: '添加用户'
-                    ,content: '/userManager/userform'
+                    ,content: '/system/userManager/userform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
@@ -227,7 +227,7 @@ app.controller('userController', function($scope, $controller, userService) {
                 layer.open({
                     type: 2
                     ,title: '编辑用户'
-                    ,content: 'userform.html'
+                    ,content: '/system/userManager/userform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
@@ -303,7 +303,7 @@ app.controller('userController', function($scope, $controller, userService) {
                 layer.open({
                     type: 2
                     ,title: '角色分配'
-                    ,content: 'assignRole.html'
+                    ,content: '/system/roleManager/assignRole'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']

@@ -64,13 +64,13 @@
           </li>
           <li class="layui-nav-item" lay-unselect>
             <a href="javascript:;">
-              <cite>贤心</cite>
+              <cite>{{user.nick_name}}</cite>
             </a>
             <dl class="layui-nav-child">
               <dd><a lay-href="set/user/info.html">基本资料</a></dd>
               <dd><a lay-href="set/user/password.html">修改密码</a></dd>
               <hr>
-              <dd layadmin-event="logout" style="text-align: center;"><a>退出</a></dd>
+              <dd layadmin-event="logout1" style="text-align: center;"><a ng-click="logout()">退出</a></dd>
             </dl>
           </li>
           
@@ -86,24 +86,24 @@
       <!-- 侧边菜单 -->
       <div class="layui-side layui-side-menu">
         <div class="layui-side-scroll">
-          <div class="layui-logo" lay-href="/console">
+          <div class="layui-logo" lay-href="/system/console">
             <!-- 这里可以作为用户头像 -->
             <span>layuiAdmin</span>
           </div>
           
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-            <li data-name="user" class="layui-nav-item" th:each="item:${treeMenu}">
-              <a href="javascript:;" th:attr="lay-url=${item.value.url}" lay-tips="用户" lay-direction="2">
-                <i th:class="${item.value.icon}"></i>
-                <span class="layui-nav-title" th:text="${item.value.name}">一级菜单</span>
+            <li data-name="user" class="layui-nav-item" ng-repeat="item in menuList">
+              <a href="{{item.url}}" lay-direction="2">
+                <i class="{{item.icon}}"></i>
+                <span class="layui-nav-title" >{{item.name}}</span>
                 <!--<cite>用户</cite>-->
               </a>
-              <dl class="layui-nav-child" th:if="${item.value.children.size()}">
-                <dd th:each="cItem:${item.value.children}">
-                  <a href="javascript:;" th:attr="lay-url=${cItem.value.url}"><span class="layui-nav-title" th:text="${cItem.value.name}">二级菜单</span></a></a>
-                  <dl class="layui-nav-child" th:if="${cItem.value.children.size()}">
-                    <dd th:each="tItem:${cItem.value.children}">
-                      <a href="javascript:;" th:attr="lay-url=${tItem.value.url}"><span class="layui-nav-title" th:text="${tItem.value.name}">三级菜单</span></a>
+              <dl class="layui-nav-child">
+                <dd ng-repeat="cItem in item.children">
+                  <a href="{{cItem.url}}"><span class="layui-nav-title">{{cItem.name}}</span></a></a>
+                  <dl class="layui-nav-child">
+                    <dd ng-repeat="tItem in cItem.children">
+                      <a href="javascript:;" lay-href="{{tItem.url}}"><span class="layui-nav-title">{{tItem.name}}</span></a>
                     </dd>
                   </dl>
                 </dd>

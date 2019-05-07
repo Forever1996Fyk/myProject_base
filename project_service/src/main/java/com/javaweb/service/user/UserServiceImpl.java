@@ -105,7 +105,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Role> findRole(User user) {
-        Set<Role> roles = user.getRoles();
+        Set<Role> roles = roleDao.findByUsers_idAndStatus(user.getId(), StatusEnum.Normal.getValue());
+        //Set<Role> roles = user.getRoles();
 
         Role entity = new Role();
         entity.setStatus(StatusEnum.Normal.getValue());

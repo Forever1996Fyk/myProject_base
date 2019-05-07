@@ -56,11 +56,15 @@ public class IndexController {
             Permission permission = entry.getValue();
             if (!permission.getLevel().equals(MenuTypeEnum.NOT_MENU.getValue())) {//如果是菜单
                 if (keyMenu.get(permission.getPid()) != null) {//如果pid不为空,就以排序号为key, permission为值
-                    keyMenu.get(permission.getPid()).getChildren().put(String.valueOf(permission.getSort()),permission);
+                    keyMenu.get(permission.getPid()).getChildren().put(String.valueOf(permission.getSort()), permission);
                 } else {
                     if (permission.getLevel().equals(MenuTypeEnum.TOP_LEVEL.getValue())) {//如果是一级菜单
                         treeMap.put(String.valueOf(permission.getSort()), permission);
                     }
+                }
+            } else {
+                if (keyMenu.get(permission.getPid()) != null) {//如果pid不为空,就以排序号为key, permission为值
+                    keyMenu.get(permission.getPid()).getChildren().put(String.valueOf(permission.getSort()), permission);
                 }
             }
 

@@ -202,7 +202,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
                 layer.open({
                     type: 2
                     ,title: '添加角色'
-                    ,content: 'roleform.html'
+                    ,content: '/system/roleManager/roleform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
@@ -226,7 +226,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
                 layer.open({
                     type: 2
                     ,title: '编辑角色'
-                    ,content: 'roleform.html'
+                    ,content: '/system/roleManager/roleform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
@@ -302,7 +302,7 @@ app.controller('roleController', function($scope, $controller, roleService) {
                 layer.open({
                     type: 2
                     ,title: '授权'
-                    ,content: 'authorization.html'
+                    ,content: '/system/authorization'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']

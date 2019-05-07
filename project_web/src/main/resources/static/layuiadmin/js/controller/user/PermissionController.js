@@ -148,7 +148,7 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                 layer.open({
                     type: 2
                     ,title: '添加权限'
-                    ,content: 'permissionform.html'
+                    ,content: '/system/premissionManager/permissionform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']
@@ -172,7 +172,7 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                 layer.open({
                     type: 2
                     ,title: '编辑权限'
-                    ,content: 'permissionform.html'
+                    ,content: '/system/premissionManager/permissionform'
                     ,maxmin: true
                     ,area: ['500px', '450px']
                     ,btn: ['确定', '取消']

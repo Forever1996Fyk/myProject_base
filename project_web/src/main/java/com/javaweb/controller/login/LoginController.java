@@ -4,13 +4,21 @@ package com.javaweb.controller.login;/**
 
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
+import com.javaweb.enums.ResultEnum;
 import com.javaweb.pojo.User;
 import com.javaweb.service.login.LoginService;
-import com.javaweb.util.jwt.JWTUtil;
 import com.javaweb.util.shiro.ShiroKit;
-import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @program: project_parent
@@ -25,26 +33,62 @@ public class LoginController {
 
     /**
      *
-     * @param contentType 获取http的头信息，即token
      * @param userParam 用户账号密码
      * @return
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Result login(@RequestHeader(name = "Content-Type", defaultValue = "application/json") String contentType,
-                        @RequestBody(required = false) User userParam) {
+    public Result login(@RequestBody(required = false) User userParam, String rememberMe) {
 
         String account = userParam.getAccount();
         String password = userParam.getPassword();
+        if (StringUtils.isEmpty(account) || StringUtils.isEmpty(password)) {
+            return new Result(false, StatusCode.LOGINERROR.getValue(), ResultEnum.USER_NAME_PWD_NULL.getMessage());
+        }
+        //获取subject主体对象
+        Subject subject = SecurityUtils.getSubject();
+
         User user = loginService.findUserByAccount(account);
-        //获取盐
+
+        if (user == null) {
+            return new Result(false, StatusCode.LOGINERROR.getValue(), "login failed");
+        }
+
+        // 获取盐
         String salt = user.getSalt();
         //原密码加密(通过account + salt作为盐)
         String encodedPasswd = ShiroKit.md5(password, account + salt);
         if (user.getPassword().equals(encodedPasswd)) {
-            return new Result(true, StatusCode.OK.getValue(), "login success", JWTUtil.sign(account, encodedPasswd));
+            //封装用户数据
+            UsernamePasswordToken token = new UsernamePasswordToken(account, encodedPasswd);
+            //登录,进入自定义realm类
+            try {
+                //判断是否记住账号密码,是否自动登录
+                if (rememberMe != null) {
+                    token.setRememberMe(true);
+                } else {
+                    token.setRememberMe(false);
+                }
+                //自定义reaml操作数据库
+                subject.login(token);
+
+                return new Result(true, StatusCode.OK.getValue(), "login success");
+            } catch (LockedAccountException e) {
+                return new Result(false, StatusCode.LOGINERROR.getValue(), "该账号已被冻结");
+            } catch (AuthenticationException e) {
+                return new Result(false, StatusCode.LOGINERROR.getValue(), "用户名或密码错误");
+            }
         } else {
-            throw new UnauthorizedException();
+            return new Result(false, StatusCode.LOGINERROR.getValue(), "login failed");
         }
+
+    }
+
+    /**
+     * 退出登录
+     */
+    @RequestMapping("/logout")
+    public void logout() {
+        SecurityUtils.getSubject().logout();
     }
 
     /**

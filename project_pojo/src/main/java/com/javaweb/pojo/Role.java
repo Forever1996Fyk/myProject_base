@@ -1,5 +1,6 @@
 package com.javaweb.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.SQLDelete;
@@ -26,11 +27,14 @@ public class Role implements Serializable{
 	private String role_name;//角色名称
 	private String remark;//备注
 	private Integer status;//状态:0  已禁用 1 正在使用
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "tb_role_permission",
 			joinColumns = @JoinColumn(name = "role_id"),
 			inverseJoinColumns = @JoinColumn(name = "permission_id")) //JoinTable注解主要是针对多对多关系的表
 	private Set<Permission> permissions = new HashSet<>(0);//权限资源列表
+	@ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JsonIgnore
+	private Set<User> users = new HashSet<>(0);
 	@Transient
 	private Integer selected;//判断是否被选
 	private String create_user_id;//创建人

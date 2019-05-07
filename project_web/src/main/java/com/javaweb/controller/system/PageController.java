@@ -1,5 +1,6 @@
-package com.javaweb.controller;
+package com.javaweb.controller.system;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @create: 2019-05-05 11:35
  **/
 @Controller
+@RequestMapping("/system")
 public class PageController {
 
     @RequestMapping("/index")
@@ -23,6 +25,7 @@ public class PageController {
     }
 
     @RequestMapping("/userManager")
+    @RequiresPermissions("system:userManager")
     public String user() {
         return "views/user/user/list";
     }

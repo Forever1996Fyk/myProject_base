@@ -32,7 +32,7 @@ app.controller('loginController', function ($scope, loginService) {
                             ,icon: 1
                             ,time: 1000
                         }, function () {
-                            location.href = '/index';
+                            location.href = '/system/index';
                         });
                     } else {
                         return layer.msg(response.message);

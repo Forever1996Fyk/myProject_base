@@ -2,14 +2,18 @@ package com.javaweb.shiro;/**
  * Created by YuKaiFan on 2019/5/2.
  */
 
-import com.javaweb.util.jwt.JWTFilter;
+import com.javaweb.util.shiro.ShiroProperties;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -48,30 +52,44 @@ public class ShiroConfig {
      * @return
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
+    public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         //必须设置SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
 
         //验证过滤器
         Map<String, Filter> filtersMap = new LinkedHashMap<>();
-        filtersMap.put("jwt", new JWTFilter());
+        //分布式中可以是用JWT filtersMap.put("jwt", new JWTFilter());
+        filtersMap.put("auth", new ShiroFilter());
         shiroFilterFactoryBean.setFilters(filtersMap);
 
         //拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 
-        filterChainDefinitionMap.put("/static/**", "anon");
+        filterChainDefinitionMap.put("/", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/js/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/images/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/layui/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/lib/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/modules/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/style/**", "anon");
+        filterChainDefinitionMap.put("/static/layuiadmin/tpl/**", "anon");
 
         //访问错误页面不需要通过filter anon表示权限通过
         filterChainDefinitionMap.put("/401", "anon");
         filterChainDefinitionMap.put("/402", "anon");
 
         //其他过滤器
-        filterChainDefinitionMap.put("/menu", "jwt");
-        filterChainDefinitionMap.put("/user/**", "jwt");
-        filterChainDefinitionMap.put("/role/**", "jwt");
-        filterChainDefinitionMap.put("/permission/**", "jwt");
+        filterChainDefinitionMap.put("/user/**", "auth");
+        filterChainDefinitionMap.put("/permission/**", "auth");
+        filterChainDefinitionMap.put("/role/**", "auth");
+        filterChainDefinitionMap.put("/menu", "auth");
+        filterChainDefinitionMap.put("/system/**", "auth");
+
+        shiroFilterFactoryBean.setLoginUrl("/");
+        // 未授权错误页面
+        shiroFilterFactoryBean.setUnauthorizedUrl("/noAuth");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
@@ -83,20 +101,22 @@ public class ShiroConfig {
      * @return
      */
     @Bean
-    public SecurityManager securityManager() {
+    public DefaultWebSecurityManager securityManager(ShiroRealm shiroRealm, DefaultWebSessionManager sessionManager, CookieRememberMeManager rememberMeManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         //设置realm
-        securityManager.setRealm(shiroRealm());
+        securityManager.setRealm(shiroRealm);
+        securityManager.setSessionManager(sessionManager);
+        securityManager.setRememberMeManager(rememberMeManager);
 
-        //注入缓存管理器
-        securityManager.setCacheManager(ehCacheManager());
-
+//        //注入缓存管理器
+//        securityManager.setCacheManager(ehCacheManager());
+//
         //关闭shiro自带的session
-        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
-        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
-        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
-        securityManager.setSubjectDAO(subjectDAO);
+//        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+//        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+//        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+//        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+//        securityManager.setSubjectDAO(subjectDAO);
 
         return securityManager;
     }
@@ -106,8 +126,10 @@ public class ShiroConfig {
      * @return
      */
     @Bean
-    public ShiroRealm shiroRealm() {
-        return new ShiroRealm();
+    public ShiroRealm shiroRealm(EhCacheManager ehCacheManager) {
+        ShiroRealm shiroRealm = new ShiroRealm();
+        shiroRealm.setCacheManager(ehCacheManager);
+        return shiroRealm;
     }
 
     @Bean
@@ -115,6 +137,52 @@ public class ShiroConfig {
         EhCacheManager ehCacheManager = new EhCacheManager();
         ehCacheManager.setCacheManagerConfigFile("classpath:config/ehcache-shiro.xml");
         return ehCacheManager;
+    }
+
+    /**
+     * session管理器
+     * @param ehCacheManager
+     * @param shiroProperties
+     * @return
+     */
+    @Bean
+    public DefaultWebSessionManager defaultWebSessionManager(EhCacheManager ehCacheManager, ShiroProperties shiroProperties) {
+        DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
+        sessionManager.setCacheManager(ehCacheManager);
+        sessionManager.setGlobalSessionTimeout(shiroProperties.getGlobalSessionTimeout() * 1000);
+        sessionManager.setSessionValidationInterval(shiroProperties.getSessionValidationInterval() * 1000);
+        sessionManager.setDeleteInvalidSessions(true);
+        sessionManager.validateSessions();
+        //去掉登录页面地址栏jssessionid
+        sessionManager.setSessionIdUrlRewritingEnabled(false);
+        return sessionManager;
+    }
+
+    /**
+     * rememberMe管理器
+     * @param simpleCookie
+     * @return
+     */
+    @Bean
+    public CookieRememberMeManager rememberMeManager(SimpleCookie simpleCookie) {
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCipherKey(Base64.decode("WcfHGU25gNnTxTlmJMeSpw=="));
+        cookieRememberMeManager.setCookie(simpleCookie);
+        return cookieRememberMeManager;
+    }
+
+    /**
+     * 创建一个简单的Cookie对象
+     * @param shiroProperties
+     * @return
+     */
+    @Bean
+    public SimpleCookie simpleCookie(ShiroProperties shiroProperties) {
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        simpleCookie.setHttpOnly(true);
+        //cookie记住登录信息时间,默认7天
+        simpleCookie.setMaxAge(shiroProperties.getRememberMeTimeout() * 24 * 60 * 60);
+        return simpleCookie;
     }
 
     /**

@@ -36,6 +36,7 @@ public class Permission implements Serializable{
 	private Map<String, Object> pPermission = new HashMap<>();//上级权限实体
 	@Transient
 	private Integer selected;//判断权限是否被选中
+	private String perm;//权限标识
 	private String create_user_id;//创建人
 	private Date create_time;//创建时间
 	private String update_user_id;//更新人
@@ -150,6 +151,14 @@ public class Permission implements Serializable{
 
 	public void setSelected(Integer selected) {
 		this.selected = selected;
+	}
+
+	public String getPerm() {
+		return perm;
+	}
+
+	public void setPerm(String perm) {
+		this.perm = perm;
 	}
 
 	@Override
