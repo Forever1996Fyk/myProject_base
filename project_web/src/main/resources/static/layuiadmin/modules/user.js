@@ -11,9 +11,10 @@
         password: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"],
         account: [/^[\S]{6,12}$/, "账号必须6到12位，且不能出现空格"]
     }), t.sendAuthCode({
-        elem: "#LAY-user-getsmscode",
+        elem: "#getsmscode",
         elemPhone: "#LAY-user-login-cellphone",
         elemVercode: "#LAY-user-login-vercode"
+        ,ajax:{url:layui.setter.base+"json/user/sms.js"}
     }), a.on("click", "#LAY-user-get-vercode", function () {//验证码生成
         s(this);
         this.src = "https://www.oschina.net/action/user/captcha?t=" + (new Date).getTime()

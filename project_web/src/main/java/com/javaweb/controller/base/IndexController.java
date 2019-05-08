@@ -9,6 +9,7 @@ import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import com.javaweb.service.user.PermissionService;
 import com.javaweb.util.shiro.ShiroKit;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ public class IndexController {
     private PermissionService permissionService;
 
     @RequestMapping("/menu")
+    @RequiresPermissions("system:index")
     public Result menu() {
         //获取当前登录用户
         User curUser = (User) ShiroKit.getSubject().getPrincipal();

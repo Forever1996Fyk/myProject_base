@@ -48,11 +48,6 @@ app.controller('regController', function ($scope, regService) {
         });
     });
 
-    //layui插件
-    layui.use(['layer', 'form'], function() {
-        var layer = layui.layer;
-
-    });
 
 
 });

@@ -5,6 +5,7 @@ import com.javaweb.service.user.PermissionService;
 import com.javaweb.entity.PageResult;
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
+    @RequiresPermissions("permission:findAll")
     public Result findAll() {
         return new Result(true,  StatusCode.OK.getValue(), "查询成功", permissionService.findAll());
     }
@@ -42,6 +44,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
+    @RequiresPermissions("permission:add")
     public Result add(@RequestBody Permission permission) {
         permission.setId(String.valueOf(idWorker.nextId()));
         permission.setStatus(1);
@@ -54,6 +57,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(method = RequestMethod.PUT)
+    @RequiresPermissions("permission:update")
     public Result update(@RequestBody Permission permission) {
         return new Result(true,  StatusCode.OK.getValue(), "更新成功", permissionService.update(permission));
     }
@@ -64,6 +68,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(value = "/del/{id}", method = RequestMethod.DELETE)
+    @RequiresPermissions("permission:del")
     public Result delete(@PathVariable String id) {
         permissionService.delete(id);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
@@ -74,6 +79,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequiresPermissions("permission:pageQuery")
     public Result pageQuery(@RequestParam Map<String, Object> searchMap) {
         Page<Permission> pageData = permissionService.pageQuery(searchMap, Integer.parseInt(searchMap.get("page").toString()), Integer.parseInt(searchMap.get("limit").toString()));
         return new Result(true, StatusCode.OK.getValue(), "查询成功", new PageResult<Permission>(pageData.getTotalElements(), pageData.getContent()));
@@ -85,6 +91,7 @@ public class PermissionController {
      * @return
      */
     @RequestMapping(value = "/delBatch", method = RequestMethod.DELETE)
+    @RequiresPermissions("permission:delBatch")
     public Result delBatch(@RequestParam Map<String, Object> idsMap) {
         permissionService.delBatch(idsMap);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");

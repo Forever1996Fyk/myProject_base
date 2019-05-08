@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class PageController {
 
     @RequestMapping("/index")
+    @RequiresPermissions("system:index")
     public String index() {
         return "views/index";
     }
@@ -31,36 +32,43 @@ public class PageController {
     }
 
     @RequestMapping("/roleManager")
+    @RequiresPermissions("system:roleManager")
     public String role() {
         return "views/user/user/role";
     }
 
     @RequestMapping("/premissionManager")
+    @RequiresPermissions("system:premissionManager")
     public String premission() {
         return "views/user/user/permission";
     }
 
     @RequestMapping("/userManager/userform")
+    @RequiresPermissions("system:userManager:userform")
     public String userform() {
         return "views/user/user/userform";
     }
 
     @RequestMapping("/roleManager/roleform")
+    @RequiresPermissions("system:roleManager:roleform")
     public String roleform() {
         return "views/user/user/roleform";
     }
 
     @RequestMapping("/premissionManager/permissionform")
+    @RequiresPermissions("system:premission:permissionform")
     public String permissionform() {
         return "views/user/user/permissionform";
     }
 
     @RequestMapping("/roleManager/assignRole")
+    @RequiresPermissions("system:roleManager:assignRole")
     public String assignRole() {
         return "views/user/user/assignRole";
     }
 
     @RequestMapping("/authorization")
+    @RequiresPermissions("system:authorization")
     public String authorization() {
         return "views/user/user/authorization";
     }

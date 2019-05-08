@@ -1,5 +1,5 @@
 package com.javaweb.controller.login;/**
- * Created by 恺b on 2019/5/2.
+ * Created by YuKaiFan on 2019/5/2.
  */
 
 import com.javaweb.entity.Result;
@@ -8,6 +8,7 @@ import com.javaweb.enums.ResultEnum;
 import com.javaweb.pojo.User;
 import com.javaweb.service.login.LoginService;
 import com.javaweb.util.shiro.ShiroKit;
+import com.javaweb.vo.UserVo;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.LockedAccountException;
@@ -37,7 +38,7 @@ public class LoginController {
      * @return
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Result login(@RequestBody(required = false) User userParam, String rememberMe) {
+    public Result login(@RequestBody(required = false) UserVo userParam) {
 
         String account = userParam.getAccount();
         String password = userParam.getPassword();
@@ -63,7 +64,7 @@ public class LoginController {
             //登录,进入自定义realm类
             try {
                 //判断是否记住账号密码,是否自动登录
-                if (rememberMe != null) {
+                if (userParam.getRememberMe() != null) {
                     token.setRememberMe(true);
                 } else {
                     token.setRememberMe(false);

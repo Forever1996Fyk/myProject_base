@@ -115,6 +115,7 @@ app.controller('permissionController', function ($scope, $controller, $compile, 
                 , {field: 'sort', title: '排序', align: 'center'}
                 , {field: 'level', title: '等级', align: 'center'}
                 , {field: 'url', title: '链接', align: 'center'}
+                , {field: 'perm', title: '权限标识', align: 'center'}
                 , {field: 'remark', title: '备注', align: 'center'}
                 , {field: 'status', title: '是否禁用', align: 'center', templet: function (data) {
                     var result;

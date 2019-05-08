@@ -115,7 +115,7 @@ public class PermissionServiceImpl implements PermissionService {
                 }
                 // 上级权限id
                 if (searchMap.get("pid")!=null && !"".equals(searchMap.get("pid"))) {
-                    predicateList.add(criteriaBuilder.like(root.get("pid").as(String.class), "%"+(String)searchMap.get("pid")+"%"));
+                    predicateList.add(criteriaBuilder.equal(root.get("pid").as(String.class), (String)searchMap.get("pid")));
                 }
                 // 等级
                 if (searchMap.get("level")!=null && !"".equals(searchMap.get("level"))) {

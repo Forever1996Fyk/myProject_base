@@ -5,8 +5,6 @@ package com.javaweb.shiro;/**
 import com.javaweb.util.shiro.ShiroProperties;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
-import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
-import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -186,7 +184,7 @@ public class ShiroConfig {
     }
 
     /**
-     * 开启shiro aop注解支持.使用代理方式;所以需要开启代码支持；
+     * 开启shiro aop注解支持.使用代理方式;所以需要开启代码支持；必须要开启注解才能使用@RequiresPermissions等注解
      * @param securityManager
      * @return 授权Advisor
      */
@@ -196,4 +194,5 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
 }

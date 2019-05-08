@@ -36,6 +36,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
+    @RequiresPermissions("user:findAll")
     public Result findAll() {
         return new Result(true,  StatusCode.OK.getValue(), "查询成功", userService.findAll());
     }
@@ -46,6 +47,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
+    @RequiresPermissions("user:add")
     public Result add(@RequestBody User user) {
         user.setId(String.valueOf(idWorker.nextId()));
         user.setStatus(StatusEnum.Normal.getValue());
@@ -58,6 +60,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(method = RequestMethod.PUT)
+    @RequiresPermissions("user:update")
     public Result update(@RequestBody User user) {
         return new Result(true,  StatusCode.OK.getValue(), "更新成功", userService.update(user));
     }
@@ -68,6 +71,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/del/{id}", method = RequestMethod.DELETE)
+    @RequiresPermissions("user:del")
     public Result delete(@PathVariable String id) {
         userService.delete(id);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
@@ -79,6 +83,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequiresPermissions("user:pageQuery")
     public Result pageQuery(@RequestParam Map<String, Object> searchMap) {
         Page<User> pageData = userService.pageQuery(searchMap, Integer.parseInt(searchMap.get("page").toString()), Integer.parseInt(searchMap.get("limit").toString()));
         return new Result(true, StatusCode.OK.getValue(), "查询成功", new PageResult<User>(pageData.getTotalElements(), pageData.getContent()));
@@ -90,6 +95,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/delBatch", method = RequestMethod.DELETE)
+    @RequiresPermissions("user:delBatch")
     public Result delBatch(@RequestParam Map<String, Object> idsMap) {
         userService.delBatch(idsMap);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
@@ -101,6 +107,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/findRole", method = RequestMethod.POST)
+    @RequiresPermissions("user:findRole")
     public Result findRole(@RequestBody User user) {
         return new Result(true, StatusCode.OK.getValue(), "查询成功", userService.findRole(user));
     }
@@ -111,6 +118,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/saveRole", method = RequestMethod.POST)
+    @RequiresPermissions("user:saveRole")
     public Result saveRole(@RequestParam(value = "id", required = true) User user,
                            @RequestParam(value = "roleId", required = false) HashSet<Role> roles) {
         user.setRoles(roles);

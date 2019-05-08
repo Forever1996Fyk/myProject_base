@@ -7,6 +7,7 @@ import com.javaweb.enums.StatusEnum;
 import com.javaweb.entity.PageResult;
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
+    @RequiresPermissions("role:findAll")
     public Result findAll() {
         return new Result(true,  StatusCode.OK.getValue(), "查询成功", roleService.findAll());
     }
@@ -46,6 +48,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
+    @RequiresPermissions("role:add")
     public Result add(@RequestBody Role role) {
         role.setId(String.valueOf(idWorker.nextId()));
         role.setStatus(StatusEnum.Normal.getValue());
@@ -58,6 +61,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(method = RequestMethod.PUT)
+    @RequiresPermissions("role:update")
     public Result update(@RequestBody Role role) {
         return new Result(true,  StatusCode.OK.getValue(), "更新成功", roleService.update(role));
     }
@@ -68,6 +72,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "/del/{id}", method = RequestMethod.DELETE)
+    @RequiresPermissions("role:del")
     public Result delete(@PathVariable String id) {
         roleService.delete(id);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
@@ -79,6 +84,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequiresPermissions("role:pageQuery")
     public Result pageQuery(@RequestParam Map<String, Object> searchMap) {
         Page<Role> pageData = roleService.pageQuery(searchMap, Integer.parseInt(searchMap.get("page").toString()), Integer.parseInt(searchMap.get("limit").toString()));
         PageResult<Role> rolePageResult = new PageResult<>(pageData.getTotalElements(), pageData.getContent());
@@ -91,6 +97,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "/delBatch", method = RequestMethod.DELETE)
+    @RequiresPermissions("role:delBatch")
     public Result delBatch(@RequestParam Map<String, Object> idsMap) {
         roleService.delBatch(idsMap);
         return new Result(true,  StatusCode.OK.getValue(), "删除成功");
@@ -102,6 +109,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "/findPermission", method = RequestMethod.POST)
+    @RequiresPermissions("role:findPermission")
     public Result findPermission(@RequestBody Role role) {
         List<Permission> permission = roleService.findPermission(role);
         return new Result(true, StatusCode.OK.getValue(), "查询成功", permission);
@@ -113,6 +121,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "/savePermission", method = RequestMethod.POST)
+    @RequiresPermissions("role:savePermission")
     public Result savePermission(@RequestParam(value = "id", required = true) Role role,
                                  @RequestParam(value = "authId", required = false) HashSet<Permission> permissions) {
         role.setPermissions(permissions);
