@@ -72,4 +72,9 @@ public class PageController {
     public String authorization() {
         return "views/user/user/authorization";
     }
+
+    @RequestMapping("/userInfo")
+    public String userInfo() {
+        return "views/user/info";
+    }
 }

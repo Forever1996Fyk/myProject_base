@@ -21,15 +21,9 @@ app.controller('baseController', function ($scope) {
         , limit: 10
     };
 
-    $scope.layui = {
-        layui: function () {
-            return layui.config({
-                        base: '../../layuiadmin/' //静态资源所在路径
-                    }).extend({
-                        index: 'lib/index' //主入口模块
-                    });
-        }
-    }
+    $scope.imgPancel = function (image, panel, bgImg, canvas) {
+
+    };
 
 
 });
