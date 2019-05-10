@@ -18,7 +18,6 @@ public class AttachController {
 
     @RequestMapping("/upload/{type}")
     public void uploadAttach(@PathVariable String type) {
-
     }
 
 

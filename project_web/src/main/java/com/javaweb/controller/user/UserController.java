@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import com.javaweb.util.IdWorker;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -124,5 +125,10 @@ public class UserController {
         user.setRoles(roles);
         userService.update(user);
         return new Result(true, StatusCode.OK.getValue(), "保存成功");
+    }
+
+    @RequestMapping(value = "/userIcon", method = RequestMethod.POST)
+    public Result userIcon(@RequestParam("picture")MultipartFile picture) {
+        return null;
     }
 }

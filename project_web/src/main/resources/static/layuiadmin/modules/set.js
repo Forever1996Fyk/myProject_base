@@ -75,6 +75,7 @@
     s.render({
          url: "/api/upload/0"
         ,elem: "#LAY_avatarSrc"
+        ,field: "picture"
         ,exts: 'jpg|png|gif|jpeg'
         ,auto: false
         ,bindAction: ".upload-btn"
