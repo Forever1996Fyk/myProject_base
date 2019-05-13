@@ -23,7 +23,7 @@ public class FileUploadUtil {
      * @param modulePath
      * @return
      */
-    public static Attachment getFile(MultipartFile multipartFile, String modulePath, Integer fileType) throws Exception {
+    public static Attachment getFile(MultipartFile multipartFile, String modulePath, Integer fileType) {
         if (multipartFile.getSize() == 0) {
             throw new ResultException(UploadResultEnum.NO_FILE_NULL.getValue(), UploadResultEnum.NO_FILE_NULL.getMessage());
         }

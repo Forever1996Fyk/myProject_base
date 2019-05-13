@@ -12,8 +12,9 @@ public enum UploadResultEnum {
      */
     NO_FILE_NULL(401, "文件不能为空"),
     NO_FILE_TYPE(402, "不支持该文件类型"),
-    UPLOAD_IMG_FAIL(403, "上传图片失败"),
-    UPLOAD_FILE_FAIL(404, "上传文件失败"),
+    UPLOAD_FAIL(403, "上传失败"),
+    UPLOAD_IMG_FAIL(404, "上传图片失败"),
+    UPLOAD_FILE_FAIL(405, "上传文件失败"),
 
     ;
 

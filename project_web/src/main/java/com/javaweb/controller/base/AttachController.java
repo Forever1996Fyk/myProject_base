@@ -28,7 +28,7 @@ public class AttachController {
 
 
     @RequestMapping("/upload/{type}")
-    public Result uploadAttach(@RequestParam("fileUpload") MultipartFile multipartFile, @PathVariable Integer type) throws Exception {
+    public Result uploadAttach(@RequestParam("fileUpload") MultipartFile multipartFile, @PathVariable Integer type) {
         String path = "";
         switch (type) {
             case 0: //上传图片
@@ -39,17 +39,17 @@ public class AttachController {
                 break;
         }
         if (path.equals("")) {
-            throw new Exception();
+            return new Result(false, UploadResultEnum.UPLOAD_IMG_FAIL.getValue(), "请传入文件类型1:文件,0:图片");
         }
         Attachment attachment = FileUploadUtil.getFile(multipartFile, path, type);
         try {
             return saveFile(multipartFile, attachment);
         } catch (IOException | NoSuchAlgorithmException e) {
-            return new Result(false, UploadResultEnum.UPLOAD_IMG_FAIL.getValue(), UploadResultEnum.UPLOAD_IMG_FAIL..getMessage());
+            return new Result(false, UploadResultEnum.UPLOAD_FAIL.getValue(), UploadResultEnum.UPLOAD_FAIL.getMessage());
         }
     }
 
-    private Result saveFile(MultipartFile multipartFile, Attachment attachment) {
+    private Result saveFile(MultipartFile multipartFile, Attachment attachment) throws IOException, NoSuchAlgorithmException {
         return new Result(true, ResultEnum.SUCCESS.getValue(), ResultEnum.SUCCESS.getMessage());
     }
 
