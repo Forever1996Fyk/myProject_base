@@ -24,6 +24,7 @@ public class Attachment implements Serializable{
 	private Long attach_size;//文件大小
 	private String attach_postfix;//文件后缀
 	private String attachment;//附件
+	private String attach_path;//文件路径
 	private String remark;//备注
 	private Integer status;//状态:0  已禁用 1 正在使用
 	private String create_user_id;//创建人
@@ -144,6 +145,11 @@ public class Attachment implements Serializable{
 		this.update_time = update_time;
 	}
 
+	public String getAttach_path() {
+		return attach_path;
+	}
 
-	
+	public void setAttach_path(String attach_path) {
+		this.attach_path = attach_path;
+	}
 }

@@ -2,7 +2,7 @@ package com.javaweb.shiro;/**
  * Created by YuKaiFan on 2019/5/2.
  */
 
-import com.javaweb.util.shiro.ShiroProperties;
+import com.javaweb.properties.ShiroProperties;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
