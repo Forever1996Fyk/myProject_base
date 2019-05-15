@@ -74,7 +74,9 @@ public class PageController {
     }
 
     @RequestMapping("/userInfo")
+    @RequiresPermissions("system:index")
     public String userInfo() {
         return "views/user/info";
     }
+
 }

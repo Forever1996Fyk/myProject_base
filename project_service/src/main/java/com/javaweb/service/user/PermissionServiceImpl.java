@@ -48,7 +48,7 @@ public class PermissionServiceImpl implements PermissionService {
     public Permission update(Permission permission) {
         //解决Spring Data Jpa部分数据更新问题
         Permission prePermission = permissionDao.findById(permission.getId()).get();
-        BeanUtils.copyProperties(permission, prePermission, BeanUtil.getNullPropNames(permission));//将role中非null的值，copy到preRole中
+        BeanUtils.copyProperties(permission, prePermission, BeanUtil.getNullPropNames(permission));//将role中非null的值，copy到prePermission中
         return permissionDao.save(prePermission);
     }
 

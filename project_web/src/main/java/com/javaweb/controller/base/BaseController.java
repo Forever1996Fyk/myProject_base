@@ -25,6 +25,11 @@ public class BaseController {
         return "views/user/reg";
     }
 
+    @RequestMapping("/forget")
+    public String forget() {
+        return "views/user/forget";
+    }
+
     @RequestMapping("/noAuth")
     public String noAuth() {
         return "views/user/error";

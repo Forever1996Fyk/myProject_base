@@ -45,6 +45,7 @@ public class ToolUtil {
                     break;
                 }
             }
+            path.append("upload");
         } else if (!projectPath.startsWith("file:/")) {
             //部署服务器模式下根路径
             projectPath = projectPath.replace("/WEB-INF/classes/", "");
@@ -63,6 +64,9 @@ public class ToolUtil {
         }
 
         File file = new File(path.toString());
+        if(!file.exists()) {
+            file.mkdir();
+        }
         String rootPath = "/";
         try {
             rootPath = URLDecoder.decode(file.getAbsolutePath(), "UTF-8");

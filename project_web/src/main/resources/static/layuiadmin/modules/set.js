@@ -73,9 +73,9 @@
         context.drawImage(image, sx + moveX * imgScale, sy + moveY * imgScale, sw, sh, 0, 0, canvas[0].width, canvas[0].height);
     };
     s.render({
-         url: "/api/upload/0"
+         url: "/userIcon"
         ,elem: "#LAY_avatarSrc"
-        ,field: "picture"
+        ,field: "fileUpload"
         ,exts: 'jpg|png|gif|jpeg'
         ,auto: false
         ,bindAction: ".upload-btn"
@@ -113,7 +113,16 @@
             files[index] = new File([u8arr], file.name, {type:mime});
         }
         ,done: function (response) {
-            response.code === 200 ? r.val(response.data.url) : e.msg(response.message,{icon:5});
+            console.log(response);
+            if (response.code === 200) {
+                panel.hide();
+                $(".canvas-group").hide();
+                layer.msg("修改头像成功", {offset: '15px', time: 3000, icon: 1});
+                $(".user-avatar").attr("src", canvas[0].toDataURL());
+                delete files[index];
+            } else {
+                layer.msg(res.msg, {offset: '15px', time: 3000, icon: 2});
+            }
         }
     });
     // 关闭裁切面板及清空文件

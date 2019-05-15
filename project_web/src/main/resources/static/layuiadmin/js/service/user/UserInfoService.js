@@ -3,4 +3,7 @@
  */
 app.service('userInfoService', function ($http) {
     
+    this.getUserInfo = function () {
+        return $http.get('../../userInfo');
+    }
 });

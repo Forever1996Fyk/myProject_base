@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../../layuiadmin/style/admin.css" media="all">
   <link rel="stylesheet" href="../../layuiadmin/style/login.css" media="all">
 </head>
-
+<body ng-app="project_base" ng-controller="forgetController">
   <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
     <div class="layadmin-user-login-main">
       <div class="layadmin-user-login-box layadmin-user-login-header">
@@ -20,7 +20,7 @@
         <p>layui 官方出品的单页面后台管理模板系统</p>
       </div>
       <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
-      
+
         <script type="text/html" template>
           {{# if(layui.router().search.type === 'resetpass'){ }}
             <div class="layui-form-item">
@@ -60,7 +60,7 @@
                 </div>
                 <div class="layui-col-xs5">
                   <div style="margin-left: 10px;">
-                    <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="LAY-user-getsmscode">获取验证码</button>
+                    <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid" id="getsmscode">获取验证码</button>
                   </div>
                 </div>
               </div>
@@ -70,7 +70,16 @@
             </div>
           {{# } }}
         </script>
-   
+
+        <div class="layui-trans layui-form-item layadmin-user-login-other">
+          <label>社交账号注册</label>
+          <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
+          <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
+          <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
+
+          <a href="/" class="layadmin-user-jump-change layadmin-link layui-hide-xs">登入</a>
+        </div>
+
       </div>
     </div>
     
@@ -85,67 +94,9 @@
     </div>
 
   </div>
-
-  <script src="../../layuiadmin/layui/layui.js"></script>
-  <script>
-  layui.config({
-    base: '../../layuiadmin/' //静态资源所在路径
-  }).extend({
-    index: 'lib/index' //主入口模块
-  }).use(['index', 'user'], function(){
-    var $ = layui.$
-    ,setter = layui.setter
-    ,admin = layui.admin
-    ,form = layui.form
-    ,router = layui.router();
-
-    form.render();
-
-    //找回密码下一步
-    form.on('submit(LAY-user-forget-submit)', function(obj){
-      var field = obj.field;
-
-      //请求接口
-      admin.req({
-        url: layui.setter.base + 'json/user/forget.js' //实际使用请改成服务端真实接口
-        ,data: field
-        ,done: function(res){        
-          location.hash = '/type=resetpass';
-          location.reload();
-        }
-      });
-      
-      return false;
-    });
-    
-    //重置密码
-    form.on('submit(LAY-user-forget-resetpass)', function(obj){
-      var field = obj.field;
-      
-      //确认密码
-      if(field.password !== field.repass){
-        return layer.msg('两次密码输入不一致');
-      }
-
-      //请求接口
-      admin.req({
-        url: layui.setter.base + 'json/user/resetpass.js' //实际使用请改成服务端真实接口
-        ,data: field
-        ,done: function(res){        
-          layer.msg('密码已成功重置', {
-            offset: '15px'
-            ,icon: 1
-            ,time: 1000
-          }, function(){
-            location.href = 'login.html'; //跳转到登入页
-          });
-        }
-      });
-      
-      return false;
-    });
-    
-  });
-  </script>
+</body>
+<script src="../../layuiadmin/js/common/commonJs.js"></script>
+<script src="../../layuiadmin/js/controller/login/ForgetController.js"></script>
+<script src="../../layuiadmin/js/service/login/ForgetService.js"></script>
 </body>
 </html>

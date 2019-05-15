@@ -24,4 +24,7 @@ public class Constant {
 
     //超级管理员角色名称
     public static String ADMIN_ROLE_NAME = "admin";
+
+    //默认图片地址
+    public static String DEFAULT_PATH_IMG = "/images/default-picture.jpg";
 }

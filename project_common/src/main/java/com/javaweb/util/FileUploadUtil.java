@@ -6,8 +6,18 @@ import com.javaweb.pojo.Attachment;
 import com.javaweb.properties.UploadProjectProperties;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @program: project_parent
@@ -67,4 +77,93 @@ public class FileUploadUtil {
         return properties.getStaticPath().replace("/**", "");
     }
 
+    /**
+     * 获取文件的SHA1值
+     * @param multipartFile
+     * @return
+     */
+    public static String getFileSHA1(MultipartFile multipartFile) {
+        if (multipartFile.getSize() == 0) {
+            throw new ResultException(UploadResultEnum.NO_FILE_NULL.getValue(), UploadResultEnum.NO_FILE_NULL.getMessage());
+        }
+
+        byte[] buffer = new byte[4096];
+        try (InputStream fis = multipartFile.getInputStream()) {
+            MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+            int len = 0;
+            while ((len = fis.read(buffer)) != -1) {
+                sha1.update(buffer, 0 , len);
+            }
+            BigInteger SHA1Bi = new BigInteger(1, sha1.digest());
+            return SHA1Bi.toString(16);
+        } catch (IOException | NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 保存文件以及获取文件MD5值和SHA1值
+     * @param multipartFile
+     * @param attachment
+     */
+    public static void transferTo(MultipartFile multipartFile, Attachment attachment) throws NoSuchAlgorithmException, IOException {
+
+        byte[] buffer = new byte[4096];
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+        try (OutputStream fos = Files.newOutputStream(getDestFile(attachment).toPath()); InputStream fis = multipartFile.getInputStream()){
+            int len = 0;
+            while ((len = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
+                md5.update(buffer, 0, len);
+                sha1.update(buffer, 0 ,len);
+            }
+            fos.flush();
+        }
+        BigInteger MD5Bi = new BigInteger(1, md5.digest());
+        BigInteger SHA1Bi = new BigInteger(1, sha1.digest());
+        attachment.setAttach_md5(MD5Bi.toString(16));
+        attachment.setAttach_sha1(SHA1Bi.toString(16));
+    }
+
+    /**
+     * 获取目标文件对象
+     * @param attachment
+     * @return
+     * @throws IOException
+     */
+    public static File getDestFile(Attachment attachment) throws IOException {
+
+        //创建保存文件对象
+        String path = attachment.getAttach_path().replace(getPathPattern(), "");
+        String filePath = getUploadPath() + path;
+        File file = new File(filePath.replace("//", "/"));
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+
+        return file;
+
+    }
+
+    /**
+     * 获取文件上传保存路径
+     * @return
+     */
+    private static String getUploadPath() {
+        UploadProjectProperties properties = SpringContextUtil.getBean(UploadProjectProperties.class);
+        return properties.getFilePath();
+    }
+
+    /**
+     * 判断文件是否为支持的格式
+     * @param multipartFile
+     * @param types
+     * @return
+     */
+    public static boolean isContentType(MultipartFile multipartFile, String[] types) {
+        List<String> typeList = Arrays.asList(types);
+        return typeList.contains(multipartFile.getContentType());
+    }
 }

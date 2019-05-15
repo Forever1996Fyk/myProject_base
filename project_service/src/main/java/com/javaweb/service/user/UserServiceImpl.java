@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByParam(Map<String, Object> map) {
         //查询条件
-        Specification<User> specifiaction = createSpecifiaction(map);
+        Specification<User> specifiaction = createSpecification(map);
         return userDao.findAll(specifiaction);
     }
 
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
         //封装一个分页对象
         Pageable pageable = PageRequest.of(page-1, size);
         //查询条件
-        Specification<User> specifiaction = createSpecifiaction(searchMap);
+        Specification<User> specifiaction = createSpecification(searchMap);
         return userDao.findAll(specifiaction, pageable);
     }
 
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
      * @param searchMap
      * @return
      */
-    private Specification<User> createSpecifiaction(Map<String, Object> searchMap) {
+    private Specification<User> createSpecification(Map<String, Object> searchMap) {
         /**
          *
          * @param root：根对象，也就是把条件封装到哪个对象中.where 类名 = label.getId

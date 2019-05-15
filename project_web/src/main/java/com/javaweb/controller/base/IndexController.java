@@ -4,15 +4,22 @@ import com.javaweb.constant.Constant;
 import com.javaweb.entity.Result;
 import com.javaweb.entity.StatusCode;
 import com.javaweb.enums.MenuTypeEnum;
+import com.javaweb.enums.ResultEnum;
+import com.javaweb.pojo.Attachment;
 import com.javaweb.pojo.Permission;
 import com.javaweb.pojo.Role;
 import com.javaweb.pojo.User;
 import com.javaweb.service.user.PermissionService;
+import com.javaweb.service.user.UserService;
+import com.javaweb.util.SpringContextUtil;
 import com.javaweb.util.shiro.ShiroKit;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +35,8 @@ import java.util.Map;
 public class IndexController {
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private  UserService userService;
 
     @RequestMapping("/menu")
     @RequiresPermissions("system:index")
@@ -77,5 +86,38 @@ public class IndexController {
         map.put("treeMap", treeMap);
 
         return new Result(true, StatusCode.OK.getValue(), "获取成功", map);
+    }
+
+    /**
+     * 修改用户头像
+     * @param multipartFile
+     * @return
+     */
+    @RequestMapping("/userIcon")
+    @RequiresPermissions("system:index")
+    public Result userPicture(@RequestParam("fileUpload")MultipartFile multipartFile) {
+        AttachController attachController = SpringContextUtil.getBean(AttachController.class);
+        Integer type = attachController.fileType(multipartFile);
+        if (type != 0) {
+            return new Result(false, ResultEnum.ERROR.getValue(), "必须上传图片");
+        }
+        Result result = attachController.uploadAttach(multipartFile, type);
+        if (result.getCode().equals(ResultEnum.SUCCESS.getValue())) {
+            User curUser = (User) ShiroKit.getSubject().getPrincipal();
+            curUser.setUser_icon(((Attachment)result.getData()).getId());
+            userService.update(curUser);
+            ShiroKit.resetCookieRememberMe();
+            return new Result(false, ResultEnum.SUCCESS.getValue(), ResultEnum.SUCCESS.getMessage());
+        } else {
+            return result;
+        }
+    }
+
+    @RequestMapping("/userInfo")
+    @RequiresPermissions("system:index")
+    public Result getUserInfo() {
+        //获取当前登录用户
+        User curUser = (User) ShiroKit.getSubject().getPrincipal();
+        return new Result(true, ResultEnum.SUCCESS.getValue(), ResultEnum.SUCCESS.getMessage(), curUser);
     }
 }

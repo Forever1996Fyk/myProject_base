@@ -2,10 +2,18 @@ package com.javaweb.util.shiro;/**
  * Created by 恺b on 2019/5/2.
  */
 
+import com.javaweb.pojo.Role;
+import com.javaweb.pojo.User;
+import com.javaweb.util.SpringContextUtil;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.subject.Subject;
+
+import java.util.Set;
 
 /**
  * @program: project_parent
@@ -168,6 +176,24 @@ public class ShiroKit {
             return principal.toString();
         }
         return "";
+    }
+
+    /**
+     * 重置Cookie"记住我"序列化信息
+     */
+    public static void resetCookieRememberMe() {
+        User user = (User) getSubject().getPrincipal();
+        Set<Role> roles = user.getRoles();
+        user.setRoles(null);
+
+        RememberMeManager rememberMeManager = SpringContextUtil.getBean(RememberMeManager.class);
+        UsernamePasswordToken token = new UsernamePasswordToken();
+        token.setRememberMe(true);
+        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo();
+        simpleAuthenticationInfo.setPrincipals(SecurityUtils.getSubject().getPrincipals());
+        rememberMeManager.onSuccessfulLogin(SecurityUtils.getSubject(), token, simpleAuthenticationInfo);
+        user.setRoles(roles);
+
     }
 
 }

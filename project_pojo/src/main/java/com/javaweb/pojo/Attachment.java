@@ -1,5 +1,7 @@
 package com.javaweb.pojo;
 
+import org.hibernate.annotations.SQLDelete;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -10,13 +12,14 @@ import java.io.Serializable;
  *
  */
 @Entity
+@SQLDelete(sql = "update tb_attachment set status = 0 where id = ?")//软删除
 @Table(name="tb_attachment")
 public class Attachment implements Serializable{
 
 	@Id
 	private String id;//附件标识
-	private String owner_id;//所属标识
-	private String owner_entity;//所属表
+	private String attach_md5;//文件md5值
+	private String attach_sha1;//文件shal值
 	private String attach_origin_title;//文件原名
 	private String attach_utily;//附件属性，例身份证证明
 	private Integer attach_type;//附件类型0图片1附件
@@ -40,21 +43,7 @@ public class Attachment implements Serializable{
 		this.id = id;
 	}
 
-	public String getOwner_id() {		
-		return owner_id;
-	}
-	public void setOwner_id(String owner_id) {
-		this.owner_id = owner_id;
-	}
-
-	public String getOwner_entity() {		
-		return owner_entity;
-	}
-	public void setOwner_entity(String owner_entity) {
-		this.owner_entity = owner_entity;
-	}
-
-	public String getAttach_origin_title() {		
+	public String getAttach_origin_title() {
 		return attach_origin_title;
 	}
 	public void setAttach_origin_title(String attach_origin_title) {
@@ -151,5 +140,21 @@ public class Attachment implements Serializable{
 
 	public void setAttach_path(String attach_path) {
 		this.attach_path = attach_path;
+	}
+
+	public String getAttach_md5() {
+		return attach_md5;
+	}
+
+	public void setAttach_md5(String attach_md5) {
+		this.attach_md5 = attach_md5;
+	}
+
+	public String getAttach_sha1() {
+		return attach_sha1;
+	}
+
+	public void setAttach_sha1(String attach_sha1) {
+		this.attach_sha1 = attach_sha1;
 	}
 }

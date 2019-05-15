@@ -21,9 +21,5 @@ app.controller('baseController', function ($scope) {
         , limit: 10
     };
 
-    $scope.imgPancel = function (image, panel, bgImg, canvas) {
-
-    };
-
 
 });

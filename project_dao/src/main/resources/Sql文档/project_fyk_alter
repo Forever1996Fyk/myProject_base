@@ -1,9 +1,19 @@
 #修改或者新增的字段
 ALTER TABLE tb_permission add url VARCHAR(200) DEFAULT NULL COMMENT '链接';
+
 ALTER TABLE tb_user add salt  VARCHAR(32) DEFAULT NULL COMMENT '盐';
+
 ALTER TABLE tb_permission add perm  VARCHAR(32) DEFAULT NULL COMMENT '权限标识';
+
 ALTER TABLE tb_attachment add attach_path  VARCHAR(300) DEFAULT NULL COMMENT '文件路径';
+ALTER TABLE tb_attachment CHANGE owner_id attach_md5  varchar(300) DEFAULT NULL COMMENT '文件md5';
+ALTER TABLE tb_attachment CHANGE owner_entity attach_sha1 varchar(300) DEFAULT NULL COMMENT '文件SHA1值';
+
+#修改表字段长度
+ALTER TABLE tb_attachment modify  attach_name varchar(300) DEFAULT NULL COMMENT '文件名';
 
 #修改表tb_role_permission, tb_user_role主键为自增
 ALTER TABLE tb_role_permission change id id int(32) not null AUTO_INCREMENT;
 ALTER TABLE tb_user_role change id id int(32) not null AUTO_INCREMENT;
+
+
