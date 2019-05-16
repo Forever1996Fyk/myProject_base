@@ -22,6 +22,7 @@ public enum ResultEnum {
     USER_OLD_PWD_ERROR(404, "原来密码不正确"),
     USER_NAME_PWD_NULL(405, "用户名和密码不能为空"),
     USER_CAPTCHA_ERROR(406, "验证码错误"),
+    USER_PHONE_NOT_EXIST(407, "手机号不存在"),
 
     /**
      * 角色问题
