@@ -8,6 +8,12 @@ app.controller('forgetController', function ($scope, forgetService) {
         return forgetService.verifyPhone(data)
     };
 
+    //验证验证码是否正确
+    $scope.verifyAuthCode = function (data) {
+        return forgetService.verifyAuthCode(data)
+    };
+
+    //重置密码
     $scope.resetPwd = function (data) {
         return forgetService.resetPwd(data);
     };
@@ -17,13 +23,34 @@ app.controller('forgetController', function ($scope, forgetService) {
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'user'], function(){
-        var form = layui.form;
+        var form = layui.form,
+        t = (layui.layer, layui.laytpl, layui.setter, layui.view, layui.admin);
+
+        t.sendAuthCode({
+            elem: "#getsmscode",
+            elemPhone: "#phone",
+            elemVercode: "#LAY-user-login-vercode"
+            ,ajax:{
+                url: "../../verify/phone" + $('#phone').val(),
+                type: 'GET',
+                success: function (response) {
+                    if (response.code === 200) {
+                        console.log($('#phone').val());
+                        layer.msg(response.message);
+                    } else {
+                        return layer.msg(response.message);
+                    }
+                }
+            }
+        });
         form.render();
 
         form.on('submit(LAY-user-forget-submit)', function (obj) {
             var field = obj.field;
+            location.hash = '/type=resetpass';
+            location.reload();
 
-            $scope.verifyPhone(field).success(
+            /*$scope.verifyAuthCode(field).success(
                 function (response) {
                     if (response.code === 200) {
                         location.hash = '/type=resetpass';
@@ -32,13 +59,12 @@ app.controller('forgetController', function ($scope, forgetService) {
                         return layer.msg(response.message);
                     }
                 }
-            );
+            );*/
         });
 
         //重置密码
         form.on('submit(LAY-user-forget-resetpass)', function(obj){
             var field = obj.field;
-
             //确认密码
             if(field.password !== field.repass){
                 return layer.msg('两次密码输入不一致');
